@@ -1,0 +1,32 @@
+---
+- name: Get the current node's internal API IP address
+  shell: grep "{{ ansible_hostname }}.internalapi" /etc/hosts | awk '{print $1}'
+  register: current_ip_register
+
+- name: Set current_ip fact
+  set_fact: current_ip="{{current_ip_register.stdout}}"
+
+- name: Get the rest of the nodes' internal API IP addresses
+  shell: grep "internalapi" /etc/hosts | grep -v "{{ current_ip }}" | grep -v overcloud.internalapi | awk '{print $1}'
+  register: other_ips_register
+
+- name: Set rest of IPs fact
+  set_fact: other_ips="{{other_ips_register.stdout_lines}}"
+
+- name: Write ipsec.secrets file
+  template:
+    src: ipsec.secrets.j2
+    dest: /etc/ipsec.secrets
+    mode: '0600'
+  notify:
+  - Restart ipsec
+
+- name: Write ipsec.conf file
+  template:
+    src: ipsec.conf.j2
+    dest: /etc/ipsec.d/overcloud-tunnels.conf
+    mode: '0640'
+  notify:
+  - Restart ipsec
+
+- meta: flush_handlers

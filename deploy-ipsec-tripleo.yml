@@ -1,0 +1,8 @@
+- hosts: overcloud 
+  become: true
+  vars_files:
+  - ipsec-psk.yml
+  roles:
+  - ipsec-setup
+  - overcloud-ipsec-setup
+  - ipsec-start-tunnels

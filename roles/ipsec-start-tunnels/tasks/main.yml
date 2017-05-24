@@ -1,0 +1,14 @@
+---
+- name: Get tunnel names
+  shell: cat {{ ipsec_conf_file }} | grep conn | awk '{print $2}'
+  register: conn_names_register
+
+- name: Add IPSEC tunnels
+  command: ipsec auto --add {{ item }}
+  with_items:
+  - "{{ conn_names_register.stdout_lines }}"
+
+- name: Open IPSEC tunnels
+  command: ipsec auto --up {{ item }}
+  with_items:
+  - "{{ conn_names_register.stdout_lines }}"
