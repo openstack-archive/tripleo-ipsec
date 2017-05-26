@@ -7,3 +7,20 @@ conn overcloud-tunnel-{{ loop.index0 }}
     authby=secret
     auto=start
 {% endfor %}
+{% if node_is_hosting_vip %}
+{% for other_ip in other_ips %}
+
+conn overcloud-vip-tunnel-{{ loop.index0 }}
+    left={{ internal_api_vip }}
+    right={{ other_ip }}
+    authby=secret
+    auto=start
+{% endfor %}
+{% else %}
+
+conn overcloud-vip-tunnel
+    left={{ internal_api_vip }}
+    right={{ current_ip }}
+    authby=secret
+    auto=start
+{% endif %}

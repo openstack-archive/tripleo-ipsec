@@ -19,15 +19,44 @@
   shell: grep "{{ ansible_hostname }}.internalapi" /etc/hosts | awk '{print $1}'
   register: current_ip_register
 
-- name: Set current_ip fact
-  set_fact: current_ip="{{current_ip_register.stdout}}"
+- name: Set the current IP fact
+  set_fact:
+    current_ip: "{{current_ip_register.stdout}}"
 
 - name: Get the rest of the nodes' internal API IP addresses
   shell: grep "internalapi" /etc/hosts | grep -v "{{ current_ip }}" | grep -v "{{ overcloud_internal_api_fqdn }}" | awk '{print $1}'
   register: other_ips_register
 
-- name: Set rest of IPs fact
-  set_fact: other_ips="{{other_ips_register.stdout_lines}}"
+- name: Get the overcloud internal API VIP IP address
+  shell: grep "{{ overcloud_internal_api_fqdn }}" /etc/hosts | awk '{print $1}'
+  register: internal_api_vip_register 
+
+- name: Set the rest of the node IPs/VIP facts
+  set_fact:
+    other_ips: "{{other_ips_register.stdout_lines}}"
+    internal_api_vip: "{{internal_api_vip_register.stdout}}"
+
+- name: Determine if pacemaker is running
+  shell: systemctl is-active pacemaker
+  register: pacemaker_running
+  ignore_errors: yes
+
+- name: Determine which node is hosting the VIP
+  shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1, "\t", $4}' | grep "{{ internal_api_vip }}" | awk '{print $2}'
+  register: node_hosting_the_vip
+  when: pacemaker_running.stdout == 'active'
+
+- name: Set variable for node hosting the vip
+  set_fact:
+    node_is_hosting_vip: true
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+
+- name: Set variable for node not hosting the vip
+  set_fact:
+    node_is_hosting_vip: false
+  when: pacemaker_running.stdout != 'active' or (node_hosting_the_vip is defined and node_hosting_the_vip.stdout != ansible_hostname)
 
 - name: Write ipsec.secrets file
   template:
