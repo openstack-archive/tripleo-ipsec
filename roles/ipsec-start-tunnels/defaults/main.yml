@@ -1,2 +1,0 @@
----
-ipsec_conf_file: /etc/ipsec.d/overcloud-tunnels.conf

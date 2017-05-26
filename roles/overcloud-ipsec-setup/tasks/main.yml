@@ -1,4 +1,20 @@
 ---
+- name: Install libreswan package
+  yum: name=libreswan state=latest
+
+- name: Initialize ipsec nss database
+  command: ipsec initnss
+  args:
+    creates: /etc/ipsec.d/*db
+
+- name: Start and enable ipsec service
+  service:
+    name: ipsec
+    enabled: yes
+    state: started
+
+- include: firewall.yml
+
 - name: Get the current node's internal API IP address
   shell: grep "{{ ansible_hostname }}.internalapi" /etc/hosts | awk '{print $1}'
   register: current_ip_register
@@ -30,3 +46,17 @@
   - Restart ipsec
 
 - meta: flush_handlers
+
+- name: Get tunnel names
+  shell: cat {{ ipsec_conf_file }} | grep conn | awk '{print $2}'
+  register: conn_names_register
+
+- name: Add IPSEC tunnels
+  command: ipsec auto --add {{ item }}
+  with_items:
+  - "{{ conn_names_register.stdout_lines }}"
+
+- name: Open IPSEC tunnels
+  command: ipsec auto --up {{ item }}
+  with_items:
+  - "{{ conn_names_register.stdout_lines }}"

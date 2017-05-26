@@ -1,7 +1,11 @@
 Role Name
 =========
 
+This sets up packages and firewall settings.
+
 Sets the configuration for the IPSEC tunnels in the overcloud nodes.
+
+Parses the given configuration file and starts the IPSEC tunnels.
 
 Role Variables
 --------------
@@ -18,5 +22,4 @@ Example Playbook
 
     - hosts: servers
       roles:
-         - ipsec-setup
          - overcloud-ipsec-setup
