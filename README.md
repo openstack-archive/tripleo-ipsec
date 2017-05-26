@@ -31,5 +31,7 @@ ansible-vault encrypt ipsec-psk.yml
 Having done this, now you can run the playbook:
 
 ```
-ansible-playbook -i /usr/bin/tripleo-ansible-inventory --ask-vault-pass deploy-ipsec-tripleo.yml
+ansible-playbook -i /usr/bin/tripleo-ansible-inventory --ask-vault-pass \
+	--extra-vars "overcloud_internal_api_fqdn=overcloud.internalapi.localdomain" \
+	deploy-ipsec-tripleo.yml
 ```

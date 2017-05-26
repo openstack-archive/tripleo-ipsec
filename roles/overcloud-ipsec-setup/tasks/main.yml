@@ -23,7 +23,7 @@
   set_fact: current_ip="{{current_ip_register.stdout}}"
 
 - name: Get the rest of the nodes' internal API IP addresses
-  shell: grep "internalapi" /etc/hosts | grep -v "{{ current_ip }}" | grep -v overcloud.internalapi | awk '{print $1}'
+  shell: grep "internalapi" /etc/hosts | grep -v "{{ current_ip }}" | grep -v "{{ overcloud_internal_api_fqdn }}" | awk '{print $1}'
   register: other_ips_register
 
 - name: Set rest of IPs fact
