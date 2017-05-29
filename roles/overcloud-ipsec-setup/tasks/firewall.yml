@@ -46,3 +46,19 @@
     jump: ACCEPT
     source_port: 50
     destination_port: 50
+
+- name: Open INPUT for Protocol 51 for Authentication Header (AH) traffic
+  iptables:
+    chain: INPUT
+    protocol: udp
+    jump: ACCEPT
+    source_port: 51
+    destination_port: 51
+
+- name: Open OUTPUT for Protocol 51 for Authentication Header (AH) traffic
+  iptables:
+    chain: OUTPUT
+    protocol: udp
+    jump: ACCEPT
+    source_port: 51
+    destination_port: 51
