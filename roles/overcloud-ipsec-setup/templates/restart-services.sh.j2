@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e
+
+function try_restart_related_services() {
+	service=$1
+	if $(systemctl list-units | grep -q "$service"); then
+		systemctl list-units | grep "$service" | awk '{print $1}' | xargs systemctl restart
+	fi
+}
+
+my_hostname=$(hostname -s)
+if $(systemctl is-active pacemaker | grep -q active); then
+	host_w_vip=$(pcs status | grep ip- | sed 's/ip-//' | awk '{print $1, "\t", $4}' | grep "{{ internal_api_vip }}" | awk '{print $2}')
+	# Restart services only in node hosting the VIP
+	if [ "$my_hostname" == "$host_w_vip" ]; then
+		pcs resource restart rabbitmq
+		pcs resource restart galera
+		pcs resource restart haproxy
+	fi
+fi
+
+try_restart_related_services "httpd"
+try_restart_related_services "libvirtd"
+try_restart_related_services "neutron"
+try_restart_related_services "cinder"
+try_restart_related_services "swift"
+try_restart_related_services "glance"
+try_restart_related_services "nova"
