@@ -27,6 +27,10 @@
   shell: grep "internalapi" /etc/hosts | grep -v "{{ current_ip }}" | grep -v "{{ overcloud_internal_api_fqdn }}" | awk '{print $1}'
   register: other_ips_register
 
+- name: Get the controller hostnames and IP addresses
+  shell: grep "controller.*internalapi" /etc/hosts | awk '{print $3, ",", $1}'
+  register: controllers_register 
+
 - name: Get the overcloud internal API VIP IP address
   shell: grep "{{ overcloud_internal_api_fqdn }}" /etc/hosts | awk '{print $1}'
   register: internal_api_vip_register 
@@ -34,6 +38,7 @@
 - name: Set the rest of the node IPs/VIP facts
   set_fact:
     other_ips: "{{other_ips_register.stdout_lines}}"
+    controllers: "{{controllers_register.stdout_lines}}"
     internal_api_vip: "{{internal_api_vip_register.stdout}}"
 
 - name: Determine if pacemaker is running
@@ -49,7 +54,7 @@
 - name: Write ipsec.secrets file
   template:
     src: ipsec.secrets.j2
-    dest: /etc/ipsec.secrets
+    dest: /etc/ipsec.d/overcloud-tunnels.secrets
     mode: '0600'
   notify:
   - Restart ipsec
