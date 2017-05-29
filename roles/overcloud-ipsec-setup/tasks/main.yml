@@ -46,18 +46,6 @@
   register: node_hosting_the_vip
   when: pacemaker_running.stdout == 'active'
 
-- name: Set variable for node hosting the vip
-  set_fact:
-    node_is_hosting_vip: true
-  when:
-  - pacemaker_running.stdout == 'active'
-  - node_hosting_the_vip.stdout == ansible_hostname
-
-- name: Set variable for node not hosting the vip
-  set_fact:
-    node_is_hosting_vip: false
-  when: pacemaker_running.stdout != 'active' or (node_hosting_the_vip is defined and node_hosting_the_vip.stdout != ansible_hostname)
-
 - name: Write ipsec.secrets file
   template:
     src: ipsec.secrets.j2
@@ -76,21 +64,6 @@
 
 - meta: flush_handlers
 
-# TODO: Remove these. We restart ipsec, so these shouldn't be needed.
-#- name: Get tunnel names
-#  shell: cat {{ ipsec_conf_file }} | grep conn | awk '{print $2}'
-#  register: conn_names_register
-#
-#- name: Add IPSEC tunnels
-#  command: ipsec auto --add {{ item }}
-#  with_items:
-#  - "{{ conn_names_register.stdout_lines }}"
-#
-#- name: Open IPSEC tunnels
-#  command: ipsec auto --up {{ item }}
-#  with_items:
-#  - "{{ conn_names_register.stdout_lines }}"
-
 - name: Copy service restart script
   template:
     src: restart-services.sh.j2
@@ -100,7 +73,7 @@
 # TODO: Maybe do this only if the ipsec configuration changed.
 - name: Restart services on node hosting VIP
   command: /usr/sbin/tripleo-ipsec-restart-services.sh
-  when: 
+  when:
   - pacemaker_running.stdout == 'active'
   - node_hosting_the_vip.stdout == ansible_hostname
 

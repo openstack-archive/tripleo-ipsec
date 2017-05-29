@@ -7,7 +7,7 @@ conn overcloud-tunnel-{{ loop.index0 }}
     authby=secret
     auto=start
 {% endfor %}
-{% if node_is_hosting_vip %}
+{% if pacemaker_running.stdout == 'active' %}
 {% for other_ip in other_ips %}
 
 conn overcloud-vip-tunnel-{{ loop.index0 }}
@@ -16,11 +16,10 @@ conn overcloud-vip-tunnel-{{ loop.index0 }}
     authby=secret
     auto=start
 {% endfor %}
-{% else %}
+{% endif %}
 
 conn overcloud-vip-tunnel
     left={{ internal_api_vip }}
     right={{ current_ip }}
     authby=secret
     auto=start
-{% endif %}
