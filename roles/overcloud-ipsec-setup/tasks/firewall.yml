@@ -1,6 +1,7 @@
 ---
 - name: Open INPUT for UDP port 500 for the Internet Key Exchange (IKE) protocol
   iptables:
+    action: insert
     chain: INPUT
     protocol: udp
     jump: ACCEPT
@@ -12,6 +13,7 @@
 
 - name: Open OUTPUT for UDP port 500 for the Internet Key Exchange (IKE) protocol
   iptables:
+    action: insert
     chain: OUTPUT
     protocol: udp
     jump: ACCEPT
@@ -23,6 +25,7 @@
 
 - name: Open INPUT for UDP port 4500 for IKE NAT-Traversal
   iptables:
+    action: insert
     chain: INPUT
     protocol: udp
     jump: ACCEPT
@@ -34,6 +37,7 @@
 
 - name: Open OUTPUT for UDP port 4500 for IKE NAT-Traversal
   iptables:
+    action: insert
     chain: OUTPUT
     protocol: udp
     jump: ACCEPT
@@ -45,6 +49,7 @@
 
 - name: Open INPUT for Protocol 50 for Encapsulated Security Payload (ESP) IPsec packets 
   iptables:
+    action: insert
     chain: INPUT
     protocol: udp
     jump: ACCEPT
@@ -56,6 +61,7 @@
 
 - name: Open OUTPUT for Protocol 50 for Encapsulated Security Payload (ESP) IPsec packets 
   iptables:
+    action: insert
     chain: OUTPUT
     protocol: udp
     jump: ACCEPT
@@ -67,6 +73,7 @@
 
 - name: Open INPUT for Protocol 51 for Authentication Header (AH) traffic
   iptables:
+    action: insert
     chain: INPUT
     protocol: udp
     jump: ACCEPT
@@ -78,6 +85,7 @@
 
 - name: Open OUTPUT for Protocol 51 for Authentication Header (AH) traffic
   iptables:
+    action: insert
     chain: OUTPUT
     protocol: udp
     jump: ACCEPT
