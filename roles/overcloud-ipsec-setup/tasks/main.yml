@@ -39,6 +39,15 @@
   register: node_hosting_the_vip
   when: pacemaker_running.stdout == 'active'
 
+- name: Add uniqueids = no to ipsec setup configuration
+  lineinfile:
+    dest: /etc/ipsec.conf
+    regexp: '^\s+uniqueids'
+    insertafter: '^config setup'
+    line: "\tuniqueids=no"
+  notify:
+  - Restart ipsec
+
 - name: Write ipsec.secrets file
   template:
     src: ipsec.secrets.j2
@@ -66,12 +75,12 @@
     mode: '0700'
 
 # TODO: Maybe do this only if the ipsec configuration changed.
-- name: Restart services on node hosting VIP
-  command: /usr/sbin/tripleo-ipsec-restart-services.sh
-  when:
-  - pacemaker_running.stdout == 'active'
-  - node_hosting_the_vip.stdout == ansible_hostname
-
-- name: Restart services rest of the nodes
-  command: /usr/sbin/tripleo-ipsec-restart-services.sh
-  when: pacemaker_running.stdout != 'active' or (node_hosting_the_vip is defined and node_hosting_the_vip.stdout != ansible_hostname)
+#- name: Restart services on node hosting VIP
+#  command: /usr/sbin/tripleo-ipsec-restart-services.sh
+#  when:
+#  - pacemaker_running.stdout == 'active'
+#  - node_hosting_the_vip.stdout == ansible_hostname
+#
+#- name: Restart services rest of the nodes
+#  command: /usr/sbin/tripleo-ipsec-restart-services.sh
+#  when: pacemaker_running.stdout != 'active' or (node_hosting_the_vip is defined and node_hosting_the_vip.stdout != ansible_hostname)
