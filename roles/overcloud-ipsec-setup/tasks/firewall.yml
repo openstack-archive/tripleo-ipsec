@@ -47,50 +47,42 @@
   - Save iptables rules
   - Restore iptables rules
 
-- name: Open INPUT for Protocol 50 for Encapsulated Security Payload (ESP) IPsec packets 
+- name: Open INPUT for Protocol 50 - Encapsulated Security Payload (ESP) IPsec packets 
   iptables:
     action: insert
     chain: INPUT
-    protocol: udp
+    protocol: esp
     jump: ACCEPT
-    source_port: 50
-    destination_port: 50
   notify:
   - Save iptables rules
   - Restore iptables rules
 
-- name: Open OUTPUT for Protocol 50 for Encapsulated Security Payload (ESP) IPsec packets 
+- name: Open OUTPUT for Protocol 50 - Encapsulated Security Payload (ESP) IPsec packets 
   iptables:
     action: insert
     chain: OUTPUT
-    protocol: udp
+    protocol: esp
     jump: ACCEPT
-    source_port: 50
-    destination_port: 50
   notify:
   - Save iptables rules
   - Restore iptables rules
 
-- name: Open INPUT for Protocol 51 for Authentication Header (AH) traffic
+- name: Open INPUT for Protocol 51 - Authentication Header (AH) traffic
   iptables:
     action: insert
     chain: INPUT
-    protocol: udp
+    protocol: ah
     jump: ACCEPT
-    source_port: 51
-    destination_port: 51
   notify:
   - Save iptables rules
   - Restore iptables rules
 
-- name: Open OUTPUT for Protocol 51 for Authentication Header (AH) traffic
+- name: Open OUTPUT for Protocol 51 - Authentication Header (AH) traffic
   iptables:
     action: insert
     chain: OUTPUT
-    protocol: udp
+    protocol: ah
     jump: ACCEPT
-    source_port: 51
-    destination_port: 51
   notify:
   - Save iptables rules
   - Restore iptables rules
