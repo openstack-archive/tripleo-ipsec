@@ -28,7 +28,7 @@ conn overcloud-controller-to-compute-tunnel
 {% for controller_unsplit in controllers %}
 {% set controller = controller_unsplit.split(',') %}
 
-conn overcloud-controller-to-compute-tunnel
+conn overcloud-controller-to-compute-tunnel-{{ loop.index0 }}
     left={{ current_ip }}
     leftid=@computecluster
     right={{ controller[1] }}
