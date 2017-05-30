@@ -1,8 +1,6 @@
 ---
 - include: setup.yml
 
-- include: firewall.yml
-
 - name: Get the current node's internal API IP address
   shell: grep "{{ ansible_hostname }}.internalapi" /etc/hosts | awk '{print $1}'
   register: current_ip_register
@@ -56,6 +54,8 @@
     mode: '0640'
   notify:
   - Restart ipsec
+
+- include: firewall.yml
 
 - meta: flush_handlers
 
