@@ -6,6 +6,9 @@
     jump: ACCEPT
     source_port: 500
     destination_port: 500
+  notify:
+  - Save iptables rules
+  - Restart iptables
 
 - name: Open OUTPUT for UDP port 500 for the Internet Key Exchange (IKE) protocol
   iptables:
@@ -14,6 +17,9 @@
     jump: ACCEPT
     source_port: 500
     destination_port: 500
+  notify:
+  - Save iptables rules
+  - Restart iptables
 
 - name: Open INPUT for UDP port 4500 for IKE NAT-Traversal
   iptables:
@@ -22,6 +28,9 @@
     jump: ACCEPT
     source_port: 4500
     destination_port: 4500
+  notify:
+  - Save iptables rules
+  - Restart iptables
 
 - name: Open OUTPUT for UDP port 4500 for IKE NAT-Traversal
   iptables:
@@ -30,6 +39,9 @@
     jump: ACCEPT
     source_port: 4500
     destination_port: 4500
+  notify:
+  - Save iptables rules
+  - Restart iptables
 
 - name: Open INPUT for Protocol 50 for Encapsulated Security Payload (ESP) IPsec packets 
   iptables:
@@ -38,6 +50,9 @@
     jump: ACCEPT
     source_port: 50
     destination_port: 50
+  notify:
+  - Save iptables rules
+  - Restart iptables
 
 - name: Open OUTPUT for Protocol 50 for Encapsulated Security Payload (ESP) IPsec packets 
   iptables:
@@ -46,6 +61,9 @@
     jump: ACCEPT
     source_port: 50
     destination_port: 50
+  notify:
+  - Save iptables rules
+  - Restart iptables
 
 - name: Open INPUT for Protocol 51 for Authentication Header (AH) traffic
   iptables:
@@ -54,6 +72,9 @@
     jump: ACCEPT
     source_port: 51
     destination_port: 51
+  notify:
+  - Save iptables rules
+  - Restart iptables
 
 - name: Open OUTPUT for Protocol 51 for Authentication Header (AH) traffic
   iptables:
@@ -62,3 +83,6 @@
     jump: ACCEPT
     source_port: 51
     destination_port: 51
+  notify:
+  - Save iptables rules
+  - Restart iptables
