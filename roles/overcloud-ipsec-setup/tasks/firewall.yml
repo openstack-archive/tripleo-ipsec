@@ -9,7 +9,7 @@
     destination_port: 500
   notify:
   - Save iptables rules
-  - Restart iptables
+  - Restore iptables rules
 
 - name: Open OUTPUT for UDP port 500 for the Internet Key Exchange (IKE) protocol
   iptables:
@@ -21,7 +21,7 @@
     destination_port: 500
   notify:
   - Save iptables rules
-  - Restart iptables
+  - Restore iptables rules
 
 - name: Open INPUT for UDP port 4500 for IKE NAT-Traversal
   iptables:
@@ -33,7 +33,7 @@
     destination_port: 4500
   notify:
   - Save iptables rules
-  - Restart iptables
+  - Restore iptables rules
 
 - name: Open OUTPUT for UDP port 4500 for IKE NAT-Traversal
   iptables:
@@ -45,7 +45,7 @@
     destination_port: 4500
   notify:
   - Save iptables rules
-  - Restart iptables
+  - Restore iptables rules
 
 - name: Open INPUT for Protocol 50 for Encapsulated Security Payload (ESP) IPsec packets 
   iptables:
@@ -57,7 +57,7 @@
     destination_port: 50
   notify:
   - Save iptables rules
-  - Restart iptables
+  - Restore iptables rules
 
 - name: Open OUTPUT for Protocol 50 for Encapsulated Security Payload (ESP) IPsec packets 
   iptables:
@@ -69,7 +69,7 @@
     destination_port: 50
   notify:
   - Save iptables rules
-  - Restart iptables
+  - Restore iptables rules
 
 - name: Open INPUT for Protocol 51 for Authentication Header (AH) traffic
   iptables:
@@ -81,7 +81,7 @@
     destination_port: 51
   notify:
   - Save iptables rules
-  - Restart iptables
+  - Restore iptables rules
 
 - name: Open OUTPUT for Protocol 51 for Authentication Header (AH) traffic
   iptables:
@@ -93,4 +93,4 @@
     destination_port: 51
   notify:
   - Save iptables rules
-  - Restart iptables
+  - Restore iptables rules
