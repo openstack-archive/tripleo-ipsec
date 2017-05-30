@@ -21,6 +21,14 @@ conn overcloud-controller-to-compute-tunnel
     rightid=@computecluster
     authby=secret
     auto=add
+
+conn overcloud-vip-tunnel
+    left={{ internal_api_vip }}
+    leftid=@internalapivip
+    right=%any
+    rightid=@overcloudcluster
+    authby=secret
+    auto=add
 {% else %}
 {% for controller_unsplit in controllers %}
 {% set controller = controller_unsplit.split(',') %}
@@ -34,3 +42,11 @@ conn overcloud-controller-to-compute-tunnel-{{ loop.index0 }}
     auto=start
 {% endfor %}
 {% endif %}
+
+conn overcloud-node-to-vip-tunnel
+    left={{ current_ip }}
+    leftid=@overcloudcluster
+    right={{ internal_api_vip }}
+    rightid=@internalapivip
+    authby=secret
+    auto=start
