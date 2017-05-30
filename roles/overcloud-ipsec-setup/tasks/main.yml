@@ -27,13 +27,14 @@
   shell: grep "internalapi" /etc/hosts | grep -v "{{ current_ip }}" | grep -v "{{ overcloud_internal_api_fqdn }}" | awk '{print $1}'
   register: other_ips_register
 
+# This outputs the hosts as lines consisting of <fqdn>,<IP>
 - name: Get the controller hostnames and IP addresses
   shell: grep "controller.*internalapi" /etc/hosts | awk '{print $3, ",", $1}'
-  register: controllers_register 
+  register: controllers_register
 
 - name: Get the overcloud internal API VIP IP address
   shell: grep "{{ overcloud_internal_api_fqdn }}" /etc/hosts | awk '{print $1}'
-  register: internal_api_vip_register 
+  register: internal_api_vip_register
 
 - name: Set the rest of the node IPs/VIP facts
   set_fact:
@@ -46,6 +47,7 @@
   register: pacemaker_running
   ignore_errors: yes
 
+# This returns the hostname (short) of the node hosting the VIP
 - name: Determine which node is hosting the VIP
   shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1, "\t", $4}' | grep "{{ internal_api_vip }}" | awk '{print $2}'
   register: node_hosting_the_vip
