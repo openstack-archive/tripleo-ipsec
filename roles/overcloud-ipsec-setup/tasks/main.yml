@@ -28,10 +28,6 @@
     controllers: "{{controllers_register.stdout_lines}}"
     internal_api_vip: "{{internal_api_vip_register.stdout}}"
 
-- name: debug shit
-  debug:
-    msg: "{{ controllers }}"
-
 - name: Determine if pacemaker is running
   shell: systemctl is-active pacemaker
   register: pacemaker_running
