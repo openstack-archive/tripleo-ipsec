@@ -68,19 +68,71 @@
 
 - meta: flush_handlers
 
-- name: Copy service restart script
+# Permissions gotten from http://www.linux-ha.org/doc/dev-guides/_installing_and_packaging_resource_agents.html
+- name: Install TripleO IPSEC resource agent
+  copy:
+    src: ipsec-resource-agent.sh
+    dest: /usr/lib/ocf/resource.d/heartbeat/tripleo-ipsec
+    mode: '0755'
+  register: resource_agent
+
+- name: Was the Resource Agent added already?
+  shell: pcs resource show tripleo-ipsec-internalapi
+  ignore_errors: yes
+  register: found_resource_agent
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+
+- name: Delete Resource Agent
+  shell: pcs resource delete tripleo-ipsec-internalapi
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+  - resource_agent.changed
+  - found_resource_agent|succeeded
+
+- name: Add tripleo-ipsec pacemaker resource agent
+  shell: pcs resource create tripleo-ipsec-internalapi ocf:heartbeat:tripleo-ipsec tunnel=overcloud-vip-tunnel vip={{ internal_api_vip }} --disabled
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+  - resource_agent.changed or found_resource_agent|failed
+
+- name: Add collocation rule with VIP
+  shell: pcs constraint colocation add tripleo-ipsec-internalapi with ip-{{ internal_api_vip }}
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+  - resource_agent.changed or found_resource_agent|failed
+
+- name: Add ordering rule with VIP
+  shell: pcs constraint order start ip-{{ internal_api_vip }} then tripleo-ipsec-internalapi symmetrical=false
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+  - resource_agent.changed or found_resource_agent|failed
+
+- name: Enable resource agent
+  shell: pcs resource enable tripleo-ipsec-internalapi
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+  - resource_agent.changed or found_resource_agent|failed
+
+- name: Install service restart script
   template:
     src: restart-services.sh.j2
     dest: /usr/sbin/tripleo-ipsec-restart-services.sh
     mode: '0700'
 
 # TODO: Maybe do this only if the ipsec configuration changed.
-- name: Restart services on node hosting VIP
-  command: /usr/sbin/tripleo-ipsec-restart-services.sh
-  when:
-  - pacemaker_running.stdout == 'active'
-  - node_hosting_the_vip.stdout == ansible_hostname
-
-- name: Restart services rest of the nodes
-  command: /usr/sbin/tripleo-ipsec-restart-services.sh
-  when: pacemaker_running.stdout != 'active' or (node_hosting_the_vip is defined and node_hosting_the_vip.stdout != ansible_hostname)
+#- name: Restart services on node hosting VIP
+#  command: /usr/sbin/tripleo-ipsec-restart-services.sh
+#  when:
+#  - pacemaker_running.stdout == 'active'
+#  - node_hosting_the_vip.stdout == ansible_hostname
+#
+#- name: Restart services rest of the nodes
+#  command: /usr/sbin/tripleo-ipsec-restart-services.sh
+#  when: pacemaker_running.stdout != 'active' or (node_hosting_the_vip is defined and node_hosting_the_vip.stdout != ansible_hostname)
