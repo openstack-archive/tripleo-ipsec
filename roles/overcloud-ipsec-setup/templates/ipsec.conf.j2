@@ -14,7 +14,7 @@ conn overcloud-controller-to-controller-tunnel-{{ loop.index0 }}
     dpdaction=hold
     dpddelay=5
     dpdtimeout=15
-    phase2alg={{ ipsec_algorithm_and_key }}
+    phase2alg={{ ipsec_algorithm }}
 {% endif %}
 {% endfor %}
 
@@ -28,7 +28,7 @@ conn overcloud-controller-to-compute-tunnel
     dpdaction=hold
     dpddelay=5
     dpdtimeout=15
-    phase2alg={{ ipsec_algorithm_and_key }}
+    phase2alg={{ ipsec_algorithm }}
 
 conn overcloud-vip-tunnel
     left={{ internal_api_vip }}
@@ -40,7 +40,7 @@ conn overcloud-vip-tunnel
     dpdaction=hold
     dpddelay=5
     dpdtimeout=15
-    phase2alg={{ ipsec_algorithm_and_key }}
+    phase2alg={{ ipsec_algorithm }}
 {% else %}
 {% for controller_unsplit in controllers %}
 {% set controller = controller_unsplit.split(',') %}
@@ -55,7 +55,7 @@ conn overcloud-controller-to-compute-tunnel-{{ loop.index0 }}
     dpdaction=hold
     dpddelay=5
     dpdtimeout=15
-    phase2alg={{ ipsec_algorithm_and_key }}
+    phase2alg={{ ipsec_algorithm }}
 {% endfor %}
 {% endif %}
 
@@ -69,4 +69,4 @@ conn overcloud-node-to-vip-tunnel
     dpdaction=hold
     dpddelay=5
     dpdtimeout=15
-    phase2alg={{ ipsec_algorithm_and_key }}
+    phase2alg={{ ipsec_algorithm }}
