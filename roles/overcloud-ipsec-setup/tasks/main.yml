@@ -19,7 +19,7 @@
   register: controllers_register
 
 - name: Get the overcloud internal API VIP IP address
-  shell: grep "{{ overcloud_internal_api_fqdn }}" /etc/hosts | awk '{print $1}'
+  shell: hiera internal_api_virtual_ip
   register: internal_api_vip_register
 
 - name: Set the rest of the node IPs/VIP facts
