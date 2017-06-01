@@ -93,7 +93,7 @@
   - found_resource_agent|succeeded
 
 - name: Add tripleo-ipsec pacemaker resource agent
-  shell: pcs resource create tripleo-ipsec-internalapi ocf:heartbeat:tripleo-ipsec tunnel=overcloud-vip-tunnel vip={{ internal_api_vip }} --disabled
+  shell: pcs resource create tripleo-ipsec-internalapi ocf:heartbeat:tripleo-ipsec tunnel=overcloud-internalapi-vip-tunnel vip={{ internal_api_vip }} --disabled
   when:
   - pacemaker_running.stdout == 'active'
   - node_hosting_the_vip.stdout == ansible_hostname
