@@ -90,23 +90,22 @@ END
 }
 
 tripleo_ipsec_start() {
-	ipsec auto --add "$OCF_RESKEY_tunnel"
-	ipsec whack --listen
-	if [ $? =  $OCF_SUCCESS ]; then
-		return $OCF_SUCCESS
-	else
-		ocf_log warn "${OCF_RESOURCE_INSTANCE} : Unable to add tunnel ${OCF_RESKEY_tunnel}"
+	ipsec auto --add "${OCF_RESKEY_tunnel}"
+	ipsec whack --listen &>> /tmp/ipsec-agent.log
+	local return_code=$?
+	if [ $return_code -eq  1 -o $return_code -eq 10 ]; then
+		ocf_log warn "${OCF_RESOURCE_INSTANCE} : Unable to add tunnel ${OCF_RESKEY_tunnel} with return code ${return_code}"
 		return $OCF_ERR_GENERIC
+	else
+		return $OCF_SUCCESS
 	fi
 }
 
 tripleo_ipsec_stop() {
-	ipsec whack --listen
-	if [ $? =  $OCF_SUCCESS ]; then
-		return $OCF_SUCCESS
-	else
-		return $OCF_ERR_GENERIC
-	fi
+	ipsec auto --down "${OCF_RESKEY_tunnel}"
+	local return_code=$?
+	ocf_log info "${OCF_RESOURCE_INSTANCE} : Put down tunnel ${OCF_RESKEY_tunnel} with return code ${return_code}"
+	return $OCF_SUCCESS
 }
 
 tripleo_ipsec_monitor() {

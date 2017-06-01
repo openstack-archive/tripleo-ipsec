@@ -107,7 +107,7 @@
   - resource_agent.changed or found_resource_agent|failed
 
 - name: Add ordering rule with VIP
-  shell: pcs constraint order start ip-{{ internal_api_vip }} then tripleo-ipsec-internalapi symmetrical=false
+  shell: pcs constraint order start ip-{{ internal_api_vip }} then tripleo-ipsec-internalapi
   when:
   - pacemaker_running.stdout == 'active'
   - node_hosting_the_vip.stdout == ansible_hostname
