@@ -10,7 +10,10 @@ conn overcloud-controller-to-controller-tunnel-{{ loop.index0 }}
     right={{ controller[1] }}
     rightid=@{{ controller[0] }}
     authby=secret
-    auto=start
+    auto=route
+    dpdaction=hold
+    dpddelay=5
+    dpdtimeout=30
 {% endif %}
 {% endfor %}
 
@@ -21,6 +24,9 @@ conn overcloud-controller-to-compute-tunnel
     rightid=@computecluster
     authby=secret
     auto=add
+    dpdaction=hold
+    dpddelay=5
+    dpdtimeout=30
 
 conn overcloud-vip-tunnel
     left={{ internal_api_vip }}
@@ -29,6 +35,9 @@ conn overcloud-vip-tunnel
     rightid=@overcloudcluster
     authby=secret
     auto=add
+    dpdaction=hold
+    dpddelay=5
+    dpdtimeout=30
 {% else %}
 {% for controller_unsplit in controllers %}
 {% set controller = controller_unsplit.split(',') %}
@@ -39,7 +48,10 @@ conn overcloud-controller-to-compute-tunnel-{{ loop.index0 }}
     right={{ controller[1] }}
     rightid=@{{ controller[0] }}
     authby=secret
-    auto=start
+    auto=route
+    dpdaction=hold
+    dpddelay=5
+    dpdtimeout=30
 {% endfor %}
 {% endif %}
 
@@ -49,4 +61,7 @@ conn overcloud-node-to-vip-tunnel
     right={{ internal_api_vip }}
     rightid=@internalapivip
     authby=secret
-    auto=start
+    auto=route
+    dpdaction=hold
+    dpddelay=5
+    dpdtimeout=30
