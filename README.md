@@ -1,4 +1,4 @@
-POC for enabling ipsec tunnels in TripleO 
+POC for enabling ipsec tunnels in TripleO
 =========================================
 
 The main playbook to be ran on the overcloud nodes is:
@@ -57,3 +57,34 @@ It's possible to configure the encryption algorithm and key size with the
 `ipsec_algorithm` variable. This will set the `phase2alg` option in the
 ipsec tunnels configurations. The default value is 'aes_gcm128-null' and
 the possible values should be checked in libreswan's documentation.
+
+Generating an inventory
+-----------------------
+
+The script _/usr/bin/tripleo-ansible-inventory_ generates a dynamic inventory
+with the nodes in the overcloud. And However it comes with some inconveniences:
+
+* In deployments older than Pike, it might be a bit slow to run. To address
+  this, in Ocata and Pike it's possible to generate a static inventory out of
+  the output of this command:
+
+  ```
+  /usr/bin/tripleo-ansible-inventory  --static-inventory nodes.txt
+  ```
+
+  This will create a called nodes.txt with the static inventory, which we could
+  now use and save some time.
+
+* Newton unfortunately only takes into account computes and controllers with
+  this command. So for this deployment we need to generate an inventory of our
+  own. we can do so with the following command:
+
+  ```
+  cat <<EOF > nodes.txt
+  [overcloud:vars]
+  ansible_ssh_user = heat-admin
+
+  [overcloud]
+  $( openstack server list -c Networks -f value | sed 's/ctlplane=//')
+  EOF
+  ```
