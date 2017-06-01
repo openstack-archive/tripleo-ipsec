@@ -13,7 +13,7 @@ conn overcloud-controller-to-controller-tunnel-{{ loop.index0 }}
     auto=route
     dpdaction=hold
     dpddelay=5
-    dpdtimeout=30
+    dpdtimeout=15
 {% endif %}
 {% endfor %}
 
@@ -26,7 +26,7 @@ conn overcloud-controller-to-compute-tunnel
     auto=add
     dpdaction=hold
     dpddelay=5
-    dpdtimeout=30
+    dpdtimeout=15
 
 conn overcloud-vip-tunnel
     left={{ internal_api_vip }}
@@ -37,7 +37,7 @@ conn overcloud-vip-tunnel
     auto=add
     dpdaction=hold
     dpddelay=5
-    dpdtimeout=30
+    dpdtimeout=15
 {% else %}
 {% for controller_unsplit in controllers %}
 {% set controller = controller_unsplit.split(',') %}
@@ -51,7 +51,7 @@ conn overcloud-controller-to-compute-tunnel-{{ loop.index0 }}
     auto=route
     dpdaction=hold
     dpddelay=5
-    dpdtimeout=30
+    dpdtimeout=15
 {% endfor %}
 {% endif %}
 
@@ -64,4 +64,4 @@ conn overcloud-node-to-vip-tunnel
     auto=route
     dpdaction=hold
     dpddelay=5
-    dpdtimeout=30
+    dpdtimeout=15
