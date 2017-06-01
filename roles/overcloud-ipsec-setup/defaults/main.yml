@@ -1,3 +1,4 @@
 ---
 overcloud_internal_api_fqdn: overcloud.internalapi.localdomain
 ipsec_conf_file: /etc/ipsec.d/overcloud-tunnels.conf
+ipsec_algorithm_and_key: 'aes_gcm128-null'
