@@ -12,6 +12,9 @@ Role Variables
 
 * `overcloud_internal_api_fqdn`: The FQDN that's used for the overcloud's
   internal API VIP interface. Defaults to: 'overcloud.internalapi.localdomain'
+* `overcloud_controller_identifier`: This identifies which nodes are
+  controllers in the cluster and which aren't, and should be part of the
+  hostname of the controller. Defaults to: 'controller'
 * `ipsec_conf_file`: defines the file where the configuration will be written.
   Defaults to: /etc/ipsec.d/overcloud-tunnels.conf
 * `ipsec_algorithm`: Defines the encryption algorithm to use in the phase2alg

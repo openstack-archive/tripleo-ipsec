@@ -15,7 +15,7 @@
 
 # This outputs the hosts as lines consisting of <fqdn>,<IP>
 - name: Get the controller hostnames and IP addresses
-  shell: grep "controller.*internalapi" /etc/hosts | awk '{print $3","$1}'
+  shell: grep "{{ overcloud_controller_identifier }}.*internalapi" /etc/hosts | awk '{print $3","$1}'
   register: controllers_register
 
 - name: Get the overcloud internal API VIP IP address

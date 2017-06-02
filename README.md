@@ -51,6 +51,14 @@ ansible-playbook -i /usr/bin/tripleo-ansible-inventory --ask-vault-pass \
 	deploy-ipsec-tripleo.yml
 ```
 
+**Controller identifier**
+
+For simplicity, this playbook uses a string identifier to know which nodes in
+the cluster are controllers and which aren't. It takes this from the hostnames.
+So it's highly recommended that there's a way to explicitly identify the nodes
+this way. To set this, you need to modify the `overcloud_controller_identifier`
+with an identifier of your choice.
+
 **Encryption algorithm**
 
 It's possible to configure the encryption algorithm and key size with the
