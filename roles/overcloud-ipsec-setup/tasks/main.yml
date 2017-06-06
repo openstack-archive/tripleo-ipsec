@@ -18,15 +18,20 @@
   shell: grep "{{ overcloud_controller_identifier }}.*internalapi" /etc/hosts | awk '{print $3","$1}'
   register: controllers_register
 
-- name: Get the overcloud internal API VIP IP address
+- name: Get the overcloud internal API VIP address
   shell: hiera -c /etc/puppet/hiera.yaml internal_api_virtual_ip
   register: internal_api_vip_register
+
+- name: Get the overcloud redis VIP address
+  shell: hiera -c /etc/puppet/hiera.yaml redis_vip
+  register: redis_vip_register
 
 - name: Set the rest of the node IPs/VIP facts
   set_fact:
     other_ips: "{{other_ips_register.stdout_lines}}"
     controllers: "{{controllers_register.stdout_lines}}"
     internal_api_vip: "{{internal_api_vip_register.stdout}}"
+    redis_vip: "{{redis_vip_register.stdout}}"
 
 - name: Determine if pacemaker is running
   shell: systemctl is-active pacemaker
