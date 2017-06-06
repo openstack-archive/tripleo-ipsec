@@ -9,7 +9,7 @@
 # * specific_vip: Is the specific VIP that this resource agent will
 #   track
 #
-- name: Was the Resource Agent added already?
+- name: Was the {{ resource_agent_name }} Resource Agent added already?
   shell: pcs resource show {{ resource_agent_name }}
   ignore_errors: yes
   register: found_resource_agent
@@ -17,7 +17,7 @@
   - pacemaker_running.stdout == 'active'
   - node_hosting_the_vip.stdout == ansible_hostname
 
-- name: Delete Resource Agent
+- name: Delete {{ resource_agent_name }} Resource Agent
   shell: pcs resource delete {{ resource_agent_name }}
   when:
   - pacemaker_running.stdout == 'active'
@@ -25,28 +25,28 @@
   - resource_agent.changed
   - found_resource_agent|succeeded
 
-- name: Add tripleo-ipsec pacemaker resource agent
+- name: Add {{ resource_agent_name }} pacemaker resource agent
   shell: pcs resource create {{ resource_agent_name }} ocf:heartbeat:tripleo-ipsec tunnel={{ specific_tunnel }} vip={{ specific_vip }} --disabled
   when:
   - pacemaker_running.stdout == 'active'
   - node_hosting_the_vip.stdout == ansible_hostname
   - resource_agent.changed or found_resource_agent|failed
 
-- name: Add collocation rule with VIP
+- name: Add collocation rule with VIP ( {{ resource_agent_name }} )
   shell: pcs constraint colocation add {{ resource_agent_name }} with ip-{{ specific_vip }}
   when:
   - pacemaker_running.stdout == 'active'
   - node_hosting_the_vip.stdout == ansible_hostname
   - resource_agent.changed or found_resource_agent|failed
 
-- name: Add ordering rule with VIP
+- name: Add ordering rule with VIP ( {{ resource_agent_name }} )
   shell: pcs constraint order start ip-{{ specific_vip }} then {{ resource_agent_name }}
   when:
   - pacemaker_running.stdout == 'active'
   - node_hosting_the_vip.stdout == ansible_hostname
   - resource_agent.changed or found_resource_agent|failed
 
-- name: Enable resource agent
+- name: Enable {{ resource_agent_name }} resource agent
   shell: pcs resource enable {{ resource_agent_name }}
   when:
   - pacemaker_running.stdout == 'active'
