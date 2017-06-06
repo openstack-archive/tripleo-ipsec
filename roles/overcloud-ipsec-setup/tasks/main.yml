@@ -82,3 +82,5 @@
   register: resource_agent
 
 - include: resource-agent.yml resource_agent_name=tripleo-ipsec-internalapi specific_tunnel=overcloud-internalapi-vip-tunnel specific_vip={{ internal_api_vip }}
+
+- include: resource-agent.yml resource_agent_name=tripleo-ipsec-redis specific_tunnel=overcloud-redis-vip-tunnel specific_vip={{ redis_vip }}
