@@ -1,0 +1,54 @@
+---
+# This file means to be a generic way to add resource agents for VIPs
+# The following parametesr need to be passed to this:
+#
+# * resource_agent_name: Defines the name for the resource agent in
+#   pacemaker
+# * specific_tunnel: Is the specific tunnel that this resource agent
+#   will track
+# * specific_vip: Is the specific VIP that this resource agent will
+#   track
+#
+- name: Was the Resource Agent added already?
+  shell: pcs resource show {{ resource_agent_name }}
+  ignore_errors: yes
+  register: found_resource_agent
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+
+- name: Delete Resource Agent
+  shell: pcs resource delete {{ resource_agent_name }}
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+  - resource_agent.changed
+  - found_resource_agent|succeeded
+
+- name: Add tripleo-ipsec pacemaker resource agent
+  shell: pcs resource create {{ resource_agent_name }} ocf:heartbeat:tripleo-ipsec tunnel={{ specific_tunnel }} vip={{ specific_vip }} --disabled
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+  - resource_agent.changed or found_resource_agent|failed
+
+- name: Add collocation rule with VIP
+  shell: pcs constraint colocation add {{ resource_agent_name }} with ip-{{ specific_vip }}
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+  - resource_agent.changed or found_resource_agent|failed
+
+- name: Add ordering rule with VIP
+  shell: pcs constraint order start ip-{{ specific_vip }} then {{ resource_agent_name }}
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+  - resource_agent.changed or found_resource_agent|failed
+
+- name: Enable resource agent
+  shell: pcs resource enable {{ resource_agent_name }}
+  when:
+  - pacemaker_running.stdout == 'active'
+  - node_hosting_the_vip.stdout == ansible_hostname
+  - resource_agent.changed or found_resource_agent|failed

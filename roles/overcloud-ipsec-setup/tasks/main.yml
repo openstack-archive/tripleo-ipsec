@@ -81,46 +81,4 @@
     mode: '0755'
   register: resource_agent
 
-- name: Was the Resource Agent added already?
-  shell: pcs resource show tripleo-ipsec-internalapi
-  ignore_errors: yes
-  register: found_resource_agent
-  when:
-  - pacemaker_running.stdout == 'active'
-  - node_hosting_the_vip.stdout == ansible_hostname
-
-- name: Delete Resource Agent
-  shell: pcs resource delete tripleo-ipsec-internalapi
-  when:
-  - pacemaker_running.stdout == 'active'
-  - node_hosting_the_vip.stdout == ansible_hostname
-  - resource_agent.changed
-  - found_resource_agent|succeeded
-
-- name: Add tripleo-ipsec pacemaker resource agent
-  shell: pcs resource create tripleo-ipsec-internalapi ocf:heartbeat:tripleo-ipsec tunnel=overcloud-internalapi-vip-tunnel vip={{ internal_api_vip }} --disabled
-  when:
-  - pacemaker_running.stdout == 'active'
-  - node_hosting_the_vip.stdout == ansible_hostname
-  - resource_agent.changed or found_resource_agent|failed
-
-- name: Add collocation rule with VIP
-  shell: pcs constraint colocation add tripleo-ipsec-internalapi with ip-{{ internal_api_vip }}
-  when:
-  - pacemaker_running.stdout == 'active'
-  - node_hosting_the_vip.stdout == ansible_hostname
-  - resource_agent.changed or found_resource_agent|failed
-
-- name: Add ordering rule with VIP
-  shell: pcs constraint order start ip-{{ internal_api_vip }} then tripleo-ipsec-internalapi
-  when:
-  - pacemaker_running.stdout == 'active'
-  - node_hosting_the_vip.stdout == ansible_hostname
-  - resource_agent.changed or found_resource_agent|failed
-
-- name: Enable resource agent
-  shell: pcs resource enable tripleo-ipsec-internalapi
-  when:
-  - pacemaker_running.stdout == 'active'
-  - node_hosting_the_vip.stdout == ansible_hostname
-  - resource_agent.changed or found_resource_agent|failed
+- include: resource-agent.yml resource_agent_name=tripleo-ipsec-internalapi specific_tunnel=overcloud-internalapi-vip-tunnel specific_vip={{ internal_api_vip }}
