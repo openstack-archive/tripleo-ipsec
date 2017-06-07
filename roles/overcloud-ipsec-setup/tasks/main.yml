@@ -34,17 +34,20 @@
 - name: Set the networks IPs facts
   set_fact:
     networks:
-      internalapi:
+      - name: internalapi
         current_ip: "{{current_internalapi_ip_register.stdout}}"
         controllers: "{{internalapi_controllers_register.stdout_lines}}"
         vips:
-          internalapi: "{{internalapi_vip_register.stdout}}"
-          redis: "{{redis_vip_register.stdout}}"
-      storage:
+          - name: internalapi
+            ip: "{{internalapi_vip_register.stdout}}"
+          - name: redis
+            ip: "{{redis_vip_register.stdout}}"
+      - name: storage
         current_ip: "{{current_storage_ip_register.stdout}}"
         controllers: "{{storage_controllers_register.stdout_lines}}"
         vips:
-          storage: "{{storage_vip_register.stdout}}"
+          - name: storage
+            ip: "{{storage_vip_register.stdout}}"
 
 - name: Determine if pacemaker is running
   shell: systemctl is-active pacemaker
@@ -53,7 +56,7 @@
 
 # This returns the hostname (short) of the node hosting the VIP
 - name: Determine which node is hosting the VIP
-  shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1"\t"$4}' | grep "{{ networks['internalapi']['vips']['internalapi'] }}" | awk '{print $2}'
+  shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1"\t"$4}' | grep "{{ networks[0]['vips'][0]['ip'] }}" | awk '{print $2}'
   register: node_hosting_the_vip
   when: pacemaker_running.stdout == 'active'
 
@@ -67,7 +70,7 @@
   - Restart ipsec
 
 - include: ipsec-conf.yml
-  with_dict: "{{ networks }}"
+  with_items: "{{ networks }}"
 
 - include: firewall.yml
 
@@ -81,6 +84,6 @@
     mode: '0755'
   register: resource_agent
 
-- include: resource-agent.yml resource_agent_name=tripleo-ipsec-internalapi specific_tunnel=overcloud-internalapi-vip-tunnel specific_vip={{ networks['internalapi']['vips']['internalapi'] }}
+- include: resource-agent.yml resource_agent_name=tripleo-ipsec-internalapi specific_tunnel=overcloud-internalapi-vip-tunnel specific_vip={{ networks[0]['vips'][0]['ip'] }}
 
-- include: resource-agent.yml resource_agent_name=tripleo-ipsec-redis specific_tunnel=overcloud-redis-vip-tunnel specific_vip={{ networks['internalapi']['vips']['redis'] }}
+- include: resource-agent.yml resource_agent_name=tripleo-ipsec-redis specific_tunnel=overcloud-redis-vip-tunnel specific_vip={{ networks[0]['vips'][1]['ip'] }}
