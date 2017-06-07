@@ -2,13 +2,22 @@
 - include: setup.yml
 
 - name: Get the current node's internal API IP address
-  shell: grep "{{ ansible_hostname }}.internalapi" /etc/hosts | awk '{print $1}'
+  shell: grep "{{ ansible_hostname }}.internalapi$" /etc/hosts | awk '{print $1}'
   register: current_internalapi_ip_register
 
 # This outputs the hosts as lines consisting of <fqdn>,<IP>
 - name: Get the controller internal API hostnames and IP addresses
-  shell: grep "{{ overcloud_controller_identifier }}.*internalapi" /etc/hosts | awk '{print $3","$1}'
+  shell: grep "{{ overcloud_controller_identifier }}.*internalapi$" /etc/hosts | awk '{print $3","$1}'
   register: internalapi_controllers_register
+
+- name: Get the current node's storage IP address
+  shell: grep "{{ ansible_hostname }}.storage$" /etc/hosts | awk '{print $1}'
+  register: current_storage_ip_register
+
+# This outputs the hosts as lines consisting of <fqdn>,<IP>
+- name: Get the controller storage hostnames and IP addresses
+  shell: grep "{{ overcloud_controller_identifier }}.*storage$" /etc/hosts | awk '{print $3","$1}'
+  register: storage_controllers_register
 
 - name: Get the overcloud internal API VIP address
   shell: hiera -c /etc/puppet/hiera.yaml internal_api_virtual_ip
@@ -17,6 +26,10 @@
 - name: Get the overcloud redis VIP address
   shell: hiera -c /etc/puppet/hiera.yaml redis_vip
   register: redis_vip_register
+
+- name: Get the overcloud storage VIP address
+  shell: hiera -c /etc/puppet/hiera.yaml storage_virtual_ip
+  register: storage_vip_register
 
 - name: Set the networks IPs facts
   set_fact:
@@ -27,6 +40,11 @@
         vips:
           internalapi: "{{internalapi_vip_register.stdout}}"
           redis: "{{redis_vip_register.stdout}}"
+      storage:
+        current_ip: "{{current_storage_ip_register.stdout}}"
+        controllers: "{{storage_controllers_register.stdout_lines}}"
+        vips:
+          storage: "{{storage_vip_register.stdout}}"
 
 - name: Determine if pacemaker is running
   shell: systemctl is-active pacemaker
