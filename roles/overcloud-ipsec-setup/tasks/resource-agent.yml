@@ -1,14 +1,13 @@
 ---
 # This file means to be a generic way to add resource agents for VIPs
-# The following parametesr need to be passed to this:
-#
-# * resource_agent_name: Defines the name for the resource agent in
-#   pacemaker
-# * specific_tunnel: Is the specific tunnel that this resource agent
-#   will track
-# * specific_vip: Is the specific VIP that this resource agent will
-#   track
-#
+# The following are assumed to be passed in a loop:
+# * item.name: Name of the network
+# * item.ip: the VIP
+- set_fact:
+    resource_agent_name: tripleo-ipsec-{{ item.name }}
+    specific_tunnel: overcloud-{{ item.name }}-vip-tunnel
+    specific_vip: "{{ item.ip }}"
+
 - name: Was the {{ resource_agent_name }} Resource Agent added already?
   shell: pcs resource show {{ resource_agent_name }}
   ignore_errors: yes

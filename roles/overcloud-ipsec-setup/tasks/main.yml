@@ -84,6 +84,7 @@
     mode: '0755'
   register: resource_agent
 
-- include: resource-agent.yml resource_agent_name=tripleo-ipsec-internalapi specific_tunnel=overcloud-internalapi-vip-tunnel specific_vip={{ networks[0]['vips'][0]['ip'] }}
-
-- include: resource-agent.yml resource_agent_name=tripleo-ipsec-redis specific_tunnel=overcloud-redis-vip-tunnel specific_vip={{ networks[0]['vips'][1]['ip'] }}
+# This queries the VIPs for all networks and flattens them into a list
+# that contains a dict with the "name" and "ip" for each VIP entry.
+- include: resource-agent.yml
+  with_items: "{{ networks|json_query('[*].vips[]')|list }}"
