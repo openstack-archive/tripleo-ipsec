@@ -10,7 +10,7 @@ conn overcloud-internalapi-controller-to-controller-tunnel-{{ loop.index0 }}
     right={{ controller[1] }}
     rightid=@{{ controller[0] }}
     authby=secret
-    auto=route
+    auto=start
     dpdaction=hold
     dpddelay=5
     dpdtimeout=15
@@ -40,7 +40,7 @@ conn overcloud-internalapi-controller-to-compute-tunnel-{{ loop.index0 }}
     right={{ controller[1] }}
     rightid=@{{ controller[0] }}
     authby=secret
-    auto=route
+    auto=start
     dpdaction=hold
     dpddelay=5
     dpdtimeout=15
