@@ -2,11 +2,11 @@
 {% if pacemaker_running.stdout == 'active' %}
 {% for controller_unsplit in controllers %}
 {% set controller = controller_unsplit.split(',') %}
-{% if controller[0] != (ansible_hostname + '.internalapi') %}
+{% if controller[0] != (ansible_hostname + '.' + network) %}
 
-conn overcloud-internalapi-controller-to-controller-tunnel-{{ loop.index0 }}
+conn overcloud-{{ network }}-controller-to-controller-tunnel-{{ loop.index0 }}
     left={{ current_ip }}
-    leftid=@{{ ansible_hostname }}.internalapi
+    leftid=@{{ ansible_hostname }}.{{ network }}
     right={{ controller[1] }}
     rightid=@{{ controller[0] }}
     authby=secret
@@ -18,9 +18,9 @@ conn overcloud-internalapi-controller-to-controller-tunnel-{{ loop.index0 }}
 {% endif %}
 {% endfor %}
 
-conn overcloud-internalapi-controller-to-compute-tunnel
+conn overcloud-{{ network }}-controller-to-compute-tunnel
     left={{ current_ip }}
-    leftid=@{{ ansible_hostname }}.internalapi
+    leftid=@{{ ansible_hostname }}.{{ network }}
     right=%any
     rightid=@computecluster
     authby=secret
@@ -34,7 +34,7 @@ conn overcloud-internalapi-controller-to-compute-tunnel
 {% for controller_unsplit in controllers %}
 {% set controller = controller_unsplit.split(',') %}
 
-conn overcloud-internalapi-controller-to-compute-tunnel-{{ loop.index0 }}
+conn overcloud-{{ network }}-controller-to-compute-tunnel-{{ loop.index0 }}
     left={{ current_ip }}
     leftid=@computecluster
     right={{ controller[1] }}
