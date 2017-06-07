@@ -3,12 +3,12 @@
 
 - name: Get the current node's internal API IP address
   shell: grep "{{ ansible_hostname }}.internalapi" /etc/hosts | awk '{print $1}'
-  register: current_ip_register
+  register: current_internalapi_ip_register
 
 # This outputs the hosts as lines consisting of <fqdn>,<IP>
-- name: Get the controller hostnames and IP addresses
+- name: Get the controller internal API hostnames and IP addresses
   shell: grep "{{ overcloud_controller_identifier }}.*internalapi" /etc/hosts | awk '{print $3","$1}'
-  register: controllers_register
+  register: internalapi_controllers_register
 
 - name: Get the overcloud internal API VIP address
   shell: hiera -c /etc/puppet/hiera.yaml internal_api_virtual_ip
@@ -22,8 +22,8 @@
   set_fact:
     networks:
       internalapi:
-        current_ip: "{{current_ip_register.stdout}}"
-        controllers: "{{controllers_register.stdout_lines}}"
+        current_ip: "{{current_internalapi_ip_register.stdout}}"
+        controllers: "{{internalapi_controllers_register.stdout_lines}}"
         vips:
           internalapi: "{{internalapi_vip_register.stdout}}"
           redis: "{{redis_vip_register.stdout}}"
