@@ -25,8 +25,8 @@
         current_ip: "{{current_ip_register.stdout}}"
         controllers: "{{controllers_register.stdout_lines}}"
         vips:
-          internalapi_vip: "{{internalapi_vip_register.stdout}}"
-          redis_vip: "{{redis_vip_register.stdout}}"
+          internalapi: "{{internalapi_vip_register.stdout}}"
+          redis: "{{redis_vip_register.stdout}}"
 
 - name: Determine if pacemaker is running
   shell: systemctl is-active pacemaker
@@ -35,7 +35,7 @@
 
 # This returns the hostname (short) of the node hosting the VIP
 - name: Determine which node is hosting the VIP
-  shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1"\t"$4}' | grep "{{ networks['internalapi']['vips']['internalapi_vip'] }}" | awk '{print $2}'
+  shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1"\t"$4}' | grep "{{ networks['internalapi']['vips']['internalapi'] }}" | awk '{print $2}'
   register: node_hosting_the_vip
   when: pacemaker_running.stdout == 'active'
 
@@ -48,7 +48,7 @@
   notify:
   - Restart ipsec
 
-- include: ipsec-conf.yml network={{ item.key }} current_ip={{ item.value.current_ip }} controllers={{ item.value.controllers }} internalapi_vip={{ item.value.vips.internalapi_vip }} redis_vip={{ item.value.vips.redis_vip }}
+- include: ipsec-conf.yml
   with_dict: "{{ networks }}"
 
 - include: firewall.yml
@@ -63,6 +63,6 @@
     mode: '0755'
   register: resource_agent
 
-- include: resource-agent.yml resource_agent_name=tripleo-ipsec-internalapi specific_tunnel=overcloud-internalapi-vip-tunnel specific_vip={{ networks['internalapi']['vips']['internalapi_vip'] }}
+- include: resource-agent.yml resource_agent_name=tripleo-ipsec-internalapi specific_tunnel=overcloud-internalapi-vip-tunnel specific_vip={{ networks['internalapi']['vips']['internalapi'] }}
 
-- include: resource-agent.yml resource_agent_name=tripleo-ipsec-redis specific_tunnel=overcloud-redis-vip-tunnel specific_vip={{ networks['internalapi']['vips']['redis_vip'] }}
+- include: resource-agent.yml resource_agent_name=tripleo-ipsec-redis specific_tunnel=overcloud-redis-vip-tunnel specific_vip={{ networks['internalapi']['vips']['redis'] }}

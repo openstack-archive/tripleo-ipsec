@@ -1,16 +1,14 @@
 ---
+- set_fact:
+    network: "{{ item.key }}"
+    current_ip: "{{ item.value.current_ip }}"
+    controllers: "{{ item.value.controllers }}"
+    vips: "{{ item.value.vips }}"
+
 - name: Write node-to-node ipsec secrets file
   template:
     src: ipsec-node-to-node-tunnels.secrets.j2
     dest: /etc/ipsec.d/overcloud-{{ network }}-node-to-node-tunnels.secrets
-    mode: '0600'
-  notify:
-  - Restart ipsec
-
-- name: Write ipsec.secrets file
-  template:
-    src: ipsec-vip-tunnels.secrets.j2
-    dest: /etc/ipsec.d/overcloud-{{ network }}-vip-tunnels.secrets
     mode: '0600'
   notify:
   - Restart ipsec
@@ -23,11 +21,25 @@
   notify:
   - Restart ipsec
 
+- name: Write VIP ipsec secrets file
+  template:
+    src: ipsec-vip-tunnels.secrets.j2
+    dest: /etc/ipsec.d/overcloud-{{ current_vip.key }}-vip-tunnels.secrets
+    mode: '0600'
+  with_dict: "{{ vips }}"
+  loop_control:
+    loop_var: current_vip
+  notify:
+  - Restart ipsec
+
 - name: Write VIP ipsec tunnel configuration
   template:
     src: ipsec-vip-tunnels.conf.j2
-    dest: /etc/ipsec.d/overcloud-{{ network }}-vip-tunnels.conf
+    dest: /etc/ipsec.d/overcloud-{{ current_vip.key }}-vip-tunnels.conf
     mode: '0640'
+  with_dict: "{{ vips }}"
+  loop_control:
+    loop_var: current_vip
   notify:
   - Restart ipsec
 
