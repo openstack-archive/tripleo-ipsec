@@ -53,18 +53,34 @@
   notify:
   - Restart ipsec
 
-- name: Write ipsec.secrets file
+- name: Write node-to-node ipsec secrets file
   template:
-    src: ipsec.secrets.j2
-    dest: /etc/ipsec.d/overcloud-tunnels.secrets
+    src: ipsec-node-to-node-tunnels.secrets.j2
+    dest: /etc/ipsec.d/overcloud-internalapi-node-to-node-tunnels.secrets
     mode: '0600'
   notify:
   - Restart ipsec
 
-- name: Write ipsec.conf file
+- name: Write ipsec.secrets file
   template:
-    src: ipsec.conf.j2
-    dest: /etc/ipsec.d/overcloud-tunnels.conf
+    src: ipsec-vip-tunnels.secrets.j2
+    dest: /etc/ipsec.d/overcloud-internalapi-vip-tunnels.secrets
+    mode: '0600'
+  notify:
+  - Restart ipsec
+
+- name: Write node-to-node ipsec tunnel configuration
+  template:
+    src: ipsec-node-to-node-tunnels.conf.j2
+    dest: /etc/ipsec.d/overcloud-internalapi-node-to-node-tunnels.conf
+    mode: '0640'
+  notify:
+  - Restart ipsec
+
+- name: Write VIP ipsec tunnel configuration
+  template:
+    src: ipsec-vip-tunnels.conf.j2
+    dest: /etc/ipsec.d/overcloud-internalapi-vip-tunnels.conf
     mode: '0640'
   notify:
   - Restart ipsec
