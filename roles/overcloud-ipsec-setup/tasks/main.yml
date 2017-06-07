@@ -5,10 +5,6 @@
   shell: grep "{{ ansible_hostname }}.internalapi" /etc/hosts | awk '{print $1}'
   register: current_ip_register
 
-- name: Set the current IP fact
-  set_fact:
-    current_ip: "{{current_ip_register.stdout}}"
-
 # This outputs the hosts as lines consisting of <fqdn>,<IP>
 - name: Get the controller hostnames and IP addresses
   shell: grep "{{ overcloud_controller_identifier }}.*internalapi" /etc/hosts | awk '{print $3","$1}'
@@ -16,17 +12,21 @@
 
 - name: Get the overcloud internal API VIP address
   shell: hiera -c /etc/puppet/hiera.yaml internal_api_virtual_ip
-  register: internal_api_vip_register
+  register: internalapi_vip_register
 
 - name: Get the overcloud redis VIP address
   shell: hiera -c /etc/puppet/hiera.yaml redis_vip
   register: redis_vip_register
 
-- name: Set the rest of the node IPs/VIP facts
+- name: Set the networks IPs facts
   set_fact:
-    controllers: "{{controllers_register.stdout_lines}}"
-    internal_api_vip: "{{internal_api_vip_register.stdout}}"
-    redis_vip: "{{redis_vip_register.stdout}}"
+    networks:
+      internalapi:
+        current_ip: "{{current_ip_register.stdout}}"
+        controllers: "{{controllers_register.stdout_lines}}"
+        vips:
+          internalapi_vip: "{{internalapi_vip_register.stdout}}"
+          redis_vip: "{{redis_vip_register.stdout}}"
 
 - name: Determine if pacemaker is running
   shell: systemctl is-active pacemaker
@@ -35,7 +35,7 @@
 
 # This returns the hostname (short) of the node hosting the VIP
 - name: Determine which node is hosting the VIP
-  shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1"\t"$4}' | grep "{{ internal_api_vip }}" | awk '{print $2}'
+  shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1"\t"$4}' | grep "{{ networks['internalapi']['vips']['internalapi_vip'] }}" | awk '{print $2}'
   register: node_hosting_the_vip
   when: pacemaker_running.stdout == 'active'
 
@@ -48,37 +48,8 @@
   notify:
   - Restart ipsec
 
-- name: Write node-to-node ipsec secrets file
-  template:
-    src: ipsec-node-to-node-tunnels.secrets.j2
-    dest: /etc/ipsec.d/overcloud-internalapi-node-to-node-tunnels.secrets
-    mode: '0600'
-  notify:
-  - Restart ipsec
-
-- name: Write ipsec.secrets file
-  template:
-    src: ipsec-vip-tunnels.secrets.j2
-    dest: /etc/ipsec.d/overcloud-internalapi-vip-tunnels.secrets
-    mode: '0600'
-  notify:
-  - Restart ipsec
-
-- name: Write node-to-node ipsec tunnel configuration
-  template:
-    src: ipsec-node-to-node-tunnels.conf.j2
-    dest: /etc/ipsec.d/overcloud-internalapi-node-to-node-tunnels.conf
-    mode: '0640'
-  notify:
-  - Restart ipsec
-
-- name: Write VIP ipsec tunnel configuration
-  template:
-    src: ipsec-vip-tunnels.conf.j2
-    dest: /etc/ipsec.d/overcloud-internalapi-vip-tunnels.conf
-    mode: '0640'
-  notify:
-  - Restart ipsec
+- include: ipsec-conf.yml network={{ item.key }} current_ip={{ item.value.current_ip }} controllers={{ item.value.controllers }} internalapi_vip={{ item.value.vips.internalapi_vip }} redis_vip={{ item.value.vips.redis_vip }}
+  with_dict: "{{ networks }}"
 
 - include: firewall.yml
 
@@ -92,6 +63,6 @@
     mode: '0755'
   register: resource_agent
 
-- include: resource-agent.yml resource_agent_name=tripleo-ipsec-internalapi specific_tunnel=overcloud-internalapi-vip-tunnel specific_vip={{ internal_api_vip }}
+- include: resource-agent.yml resource_agent_name=tripleo-ipsec-internalapi specific_tunnel=overcloud-internalapi-vip-tunnel specific_vip={{ networks['internalapi']['vips']['internalapi_vip'] }}
 
-- include: resource-agent.yml resource_agent_name=tripleo-ipsec-redis specific_tunnel=overcloud-redis-vip-tunnel specific_vip={{ redis_vip }}
+- include: resource-agent.yml resource_agent_name=tripleo-ipsec-redis specific_tunnel=overcloud-redis-vip-tunnel specific_vip={{ networks['internalapi']['vips']['redis_vip'] }}

@@ -2,7 +2,7 @@
 {% if pacemaker_running.stdout == 'active' %}
 
 conn overcloud-internalapi-vip-tunnel
-    left={{ internal_api_vip }}
+    left={{ internalapi_vip }}
     leftid=@internalapivip
     right=%any
     rightid=@overcloudinternalapicluster
@@ -29,7 +29,7 @@ conn overcloud-redis-vip-tunnel
 conn overcloud-internalapi-node-to-vip-tunnel
     left={{ current_ip }}
     leftid=@overcloudinternalapicluster
-    right={{ internal_api_vip }}
+    right={{ internalapi_vip }}
     rightid=@internalapivip
     authby=secret
     auto=start
