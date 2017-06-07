@@ -5,7 +5,7 @@
     controllers: "{{ item.controllers }}"
     vips: "{{ item.vips }}"
 
-- name: Write node-to-node ipsec secrets file
+- name: Write node-to-node ipsec secrets file for the {{ network }} network
   template:
     src: ipsec-node-to-node-tunnels.secrets.j2
     dest: /etc/ipsec.d/overcloud-{{ network }}-node-to-node-tunnels.secrets
@@ -13,7 +13,7 @@
   notify:
   - Restart ipsec
 
-- name: Write node-to-node ipsec tunnel configuration
+- name: Write node-to-node ipsec tunnel configuration for the {{ network }} network
   template:
     src: ipsec-node-to-node-tunnels.conf.j2
     dest: /etc/ipsec.d/overcloud-{{ network }}-node-to-node-tunnels.conf
@@ -21,7 +21,7 @@
   notify:
   - Restart ipsec
 
-- name: Write VIP ipsec secrets file
+- name: Write VIP ipsec secrets file for the {{ network }} network
   template:
     src: ipsec-vip-tunnels.secrets.j2
     dest: /etc/ipsec.d/overcloud-{{ current_vip.name }}-vip-tunnels.secrets
@@ -32,7 +32,7 @@
   notify:
   - Restart ipsec
 
-- name: Write VIP ipsec tunnel configuration
+- name: Write VIP ipsec tunnel configuration for the {{ network }} network
   template:
     src: ipsec-vip-tunnels.conf.j2
     dest: /etc/ipsec.d/overcloud-{{ current_vip.name }}-vip-tunnels.conf
