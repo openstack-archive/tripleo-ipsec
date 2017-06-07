@@ -19,6 +19,15 @@
   shell: grep "{{ overcloud_controller_identifier }}.*storage$" /etc/hosts | awk '{print $3","$1}'
   register: storage_controllers_register
 
+- name: Get the current node's storagemgmt IP address
+  shell: grep "{{ ansible_hostname }}.storagemgmt$" /etc/hosts | awk '{print $1}'
+  register: current_storagemgmt_ip_register
+
+# This outputs the hosts as lines consisting of <fqdn>,<IP>
+- name: Get the controller storagemgmt hostnames and IP addresses
+  shell: grep "{{ overcloud_controller_identifier }}.*storagemgmt$" /etc/hosts | awk '{print $3","$1}'
+  register: storagemgmt_controllers_register
+
 - name: Get the overcloud internal API VIP address
   shell: hiera -c /etc/puppet/hiera.yaml internal_api_virtual_ip
   register: internalapi_vip_register
@@ -30,6 +39,10 @@
 - name: Get the overcloud storage VIP address
   shell: hiera -c /etc/puppet/hiera.yaml storage_virtual_ip
   register: storage_vip_register
+
+- name: Get the overcloud storagemgmt VIP address
+  shell: hiera -c /etc/puppet/hiera.yaml storage_mgmt_virtual_ip
+  register: storagemgmt_vip_register
 
 - name: Set the networks IPs facts
   set_fact:
@@ -48,6 +61,12 @@
         vips:
           - name: storage
             ip: "{{storage_vip_register.stdout}}"
+      - name: storagemgmt
+        current_ip: "{{current_storagemgmt_ip_register.stdout}}"
+        controllers: "{{storagemgmt_controllers_register.stdout_lines}}"
+        vips:
+          - name: storagemgmt
+            ip: "{{storagemgmt_vip_register.stdout}}"
 
 - name: Determine if pacemaker is running
   shell: systemctl is-active pacemaker
