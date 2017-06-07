@@ -9,10 +9,6 @@
   set_fact:
     current_ip: "{{current_ip_register.stdout}}"
 
-- name: Get the rest of the nodes' internal API IP addresses
-  shell: grep "internalapi" /etc/hosts | grep -v "{{ current_ip }}" | grep -v "{{ overcloud_internal_api_fqdn }}" | awk '{print $1}'
-  register: other_ips_register
-
 # This outputs the hosts as lines consisting of <fqdn>,<IP>
 - name: Get the controller hostnames and IP addresses
   shell: grep "{{ overcloud_controller_identifier }}.*internalapi" /etc/hosts | awk '{print $3","$1}'
@@ -28,7 +24,6 @@
 
 - name: Set the rest of the node IPs/VIP facts
   set_fact:
-    other_ips: "{{other_ips_register.stdout_lines}}"
     controllers: "{{controllers_register.stdout_lines}}"
     internal_api_vip: "{{internal_api_vip_register.stdout}}"
     redis_vip: "{{redis_vip_register.stdout}}"
