@@ -89,6 +89,12 @@ with the nodes in the overcloud. And However it comes with some inconveniences:
 
   ```
   cat <<EOF > nodes.txt
+  [undercloud]
+  localhost
+
+  [undercloud:vars]
+  ansible_connection = local
+
   [overcloud:vars]
   ansible_ssh_user = heat-admin
 
@@ -96,3 +102,6 @@ with the nodes in the overcloud. And However it comes with some inconveniences:
   $( openstack server list -c Networks -f value | sed 's/ctlplane=//')
   EOF
   ```
+
+  This assumes that you're deploying this playbook from the undercloud itself.
+  Hence the undercloud group containing localhost.
