@@ -1,4 +1,4 @@
-- hosts: overcloud 
+- hosts: overcloud
   become: true
   vars_files:
   - ipsec-psk.yml

@@ -28,6 +28,13 @@
   shell: grep "{{ overcloud_controller_identifier }}.*storagemgmt$" /etc/hosts | awk '{print $3","$1}'
   register: storagemgmt_controllers_register
 
+- name: Get the current node's ctlplane IP address
+  shell: grep "{{ ansible_hostname }}.ctlplane$" /etc/hosts | awk '{print $1}'
+  register: current_ctlplane_ip_register
+
+# We don't parse the control plane IP Addresses here since we don't expect communication
+# between nodes with these. We only need the VIP
+
 - name: Get the overcloud internal API VIP address
   shell: hiera -c /etc/puppet/hiera.yaml internal_api_virtual_ip
   register: internalapi_vip_register
@@ -43,6 +50,10 @@
 - name: Get the overcloud storagemgmt VIP address
   shell: hiera -c /etc/puppet/hiera.yaml storage_mgmt_virtual_ip
   register: storagemgmt_vip_register
+
+- name: Get the overcloud ctlplane VIP address
+  shell: hiera -c /etc/puppet/hiera.yaml controller_virtual_ip
+  register: ctlplane_vip_register
 
 - name: Set the networks IPs facts
   set_fact:
@@ -67,6 +78,12 @@
         vips:
           - name: storagemgmt
             ip: "{{storagemgmt_vip_register.stdout}}"
+      - name: ctlplane
+        current_ip: "{{current_ctlplane_ip_register.stdout}}"
+        controllers: []
+        vips:
+          - name: ctlplane
+            ip: "{{ctlplane_vip_register.stdout}}"
 
 - name: Determine if pacemaker is running
   shell: systemctl is-active pacemaker

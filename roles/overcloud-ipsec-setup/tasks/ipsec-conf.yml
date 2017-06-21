@@ -10,6 +10,7 @@
     src: ipsec-node-to-node-tunnels.secrets.j2
     dest: /etc/ipsec.d/overcloud-{{ network }}-node-to-node-tunnels.secrets
     mode: '0600'
+  when: controllers != []
   notify:
   - Restart ipsec
 
@@ -18,6 +19,7 @@
     src: ipsec-node-to-node-tunnels.conf.j2
     dest: /etc/ipsec.d/overcloud-{{ network }}-node-to-node-tunnels.conf
     mode: '0640'
+  when: controllers != []
   notify:
   - Restart ipsec
 
