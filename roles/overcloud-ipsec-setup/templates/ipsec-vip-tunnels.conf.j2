@@ -12,6 +12,7 @@ conn overcloud-{{ current_vip.name }}-vip-tunnel
     dpddelay=5
     dpdtimeout=15
     phase2alg={{ ipsec_algorithm }}
+    failureshunt=drop
 
 {% endif %}
 
@@ -26,3 +27,4 @@ conn overcloud-{{ current_vip.name }}-node-to-vip-tunnel
     dpddelay=5
     dpdtimeout=15
     phase2alg={{ ipsec_algorithm }}
+    failureshunt=drop

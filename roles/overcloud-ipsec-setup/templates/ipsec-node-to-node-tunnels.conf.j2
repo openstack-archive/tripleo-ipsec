@@ -15,6 +15,7 @@ conn overcloud-{{ network }}-controller-to-controller-tunnel-{{ loop.index0 }}
     dpddelay=5
     dpdtimeout=15
     phase2alg={{ ipsec_algorithm }}
+    failureshunt=drop
 {% endif %}
 {% endfor %}
 
@@ -29,6 +30,7 @@ conn overcloud-{{ network }}-controller-to-compute-tunnel
     dpddelay=5
     dpdtimeout=15
     phase2alg={{ ipsec_algorithm }}
+    failureshunt=drop
 
 {% else %}
 {% for controller_unsplit in controllers %}
@@ -45,5 +47,6 @@ conn overcloud-{{ network }}-controller-to-compute-tunnel-{{ loop.index0 }}
     dpddelay=5
     dpdtimeout=15
     phase2alg={{ ipsec_algorithm }}
+    failureshunt=drop
 {% endfor %}
 {% endif %}
