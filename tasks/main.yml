@@ -6,89 +6,19 @@
     msg: Please provide the PSK key via the 'ipsec_psk' variable
   when: ipsec_psk is not defined
 
-- name: Get the current node's internal API IP address
-  shell: grep "{{ ansible_hostname }}.internalapi$" /etc/hosts | awk '{print $1}'
-  register: current_internalapi_ip_register
-
-# This outputs the hosts as lines consisting of <fqdn>,<IP>
-- name: Get the controller internal API hostnames and IP addresses
-  shell: grep "{{ overcloud_controller_identifier }}.*internalapi$" /etc/hosts | awk '{print $3","$1}'
-  register: internalapi_controllers_register
-
-- name: Get the current node's storage IP address
-  shell: grep "{{ ansible_hostname }}.storage$" /etc/hosts | awk '{print $1}'
-  register: current_storage_ip_register
-
-# This outputs the hosts as lines consisting of <fqdn>,<IP>
-- name: Get the controller storage hostnames and IP addresses
-  shell: grep "{{ overcloud_controller_identifier }}.*storage$" /etc/hosts | awk '{print $3","$1}'
-  register: storage_controllers_register
-
-- name: Get the current node's storagemgmt IP address
-  shell: grep "{{ ansible_hostname }}.storagemgmt$" /etc/hosts | awk '{print $1}'
-  register: current_storagemgmt_ip_register
-
-# This outputs the hosts as lines consisting of <fqdn>,<IP>
-- name: Get the controller storagemgmt hostnames and IP addresses
-  shell: grep "{{ overcloud_controller_identifier }}.*storagemgmt$" /etc/hosts | awk '{print $3","$1}'
-  register: storagemgmt_controllers_register
-
-- name: Get the current node's ctlplane IP address
-  shell: grep "{{ ansible_hostname }}.ctlplane$" /etc/hosts | awk '{print $1}'
-  register: current_ctlplane_ip_register
-
-# We don't parse the control plane IP Addresses here since we don't expect communication
-# between nodes with these. We only need the VIP
-
-- name: Get the overcloud internal API VIP address
-  shell: hiera -c /etc/puppet/hiera.yaml internal_api_virtual_ip
-  register: internalapi_vip_register
-
-- name: Get the overcloud redis VIP address
-  shell: hiera -c /etc/puppet/hiera.yaml redis_vip
-  register: redis_vip_register
-
-- name: Get the overcloud storage VIP address
-  shell: hiera -c /etc/puppet/hiera.yaml storage_virtual_ip
-  register: storage_vip_register
-
-- name: Get the overcloud storagemgmt VIP address
-  shell: hiera -c /etc/puppet/hiera.yaml storage_mgmt_virtual_ip
-  register: storagemgmt_vip_register
-
-- name: Get the overcloud ctlplane VIP address
-  shell: hiera -c /etc/puppet/hiera.yaml controller_virtual_ip
-  register: ctlplane_vip_register
-
-- name: Set the networks IPs facts
-  set_fact:
-    networks:
-      - name: internalapi
-        current_ip: "{{current_internalapi_ip_register.stdout}}"
-        controllers: "{{internalapi_controllers_register.stdout_lines}}"
-        vips:
-          - name: internalapi
-            ip: "{{internalapi_vip_register.stdout}}"
-          - name: redis
-            ip: "{{redis_vip_register.stdout}}"
-      - name: storage
-        current_ip: "{{current_storage_ip_register.stdout}}"
-        controllers: "{{storage_controllers_register.stdout_lines}}"
-        vips:
-          - name: storage
-            ip: "{{storage_vip_register.stdout}}"
-      - name: storagemgmt
-        current_ip: "{{current_storagemgmt_ip_register.stdout}}"
-        controllers: "{{storagemgmt_controllers_register.stdout_lines}}"
-        vips:
-          - name: storagemgmt
-            ip: "{{storagemgmt_vip_register.stdout}}"
-      - name: ctlplane
-        current_ip: "{{current_ctlplane_ip_register.stdout}}"
-        controllers: []
-        vips:
-          - name: ctlplane
-            ip: "{{ctlplane_vip_register.stdout}}"
+# This gets the network information, which should come in a structure
+# with the following format:
+#
+#   networks:
+#     - name: <Network name>
+#       current_ip: <The IP of this node for this network>
+#       controllers: <The IPs for this network for the rest of the controllers>
+#       vips:
+#         - name: <Name of the VIP for this network>
+#           ip: <Actual VIP>
+#         - name: <Another name of the VIP for this network>
+#           ip: <Another actual VIP>
+- include: hardcoded-network-discover.yml
 
 - name: Determine if pacemaker is running
   shell: systemctl is-active pacemaker
