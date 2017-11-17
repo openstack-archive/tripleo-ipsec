@@ -3,4 +3,4 @@
   vars_files:
   - ipsec-psk.yml
   roles:
-  - overcloud-ipsec-setup
+  - tripleo-ipsec
