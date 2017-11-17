@@ -1,6 +1,11 @@
 ---
 - include: setup.yml
 
+- name: Check for PSK variable
+  fail:
+    msg: Please provide the PSK key via the 'ipsec_psk' variable
+  when: ipsec_psk is not defined
+
 - name: Get the current node's internal API IP address
   shell: grep "{{ ansible_hostname }}.internalapi$" /etc/hosts | awk '{print $1}'
   register: current_internalapi_ip_register
