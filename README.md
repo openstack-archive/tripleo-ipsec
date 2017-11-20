@@ -18,7 +18,7 @@ Role Variables
   Note that is is sensible information and it's recommended that it's stored
   securely on the host where the playbook runs from, e.g. using Ansible Vault.
   One can generate this variable with the following command:
-  openssl rand -base64 48
+  `openssl rand -base64 48`
 * `overcloud_controller_identifier`: This identifies which nodes are
   controllers in the cluster and which aren't, and should be part of the
   hostname of the controller. Defaults to: 'controller'. It's highly
