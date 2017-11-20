@@ -24,11 +24,6 @@ Role Variables
   configuration option for the tunnels. Defaults to: `aes_gcm128-null`.
   The possible values should be checked in libreswan's documentation.
 
-Dependencies
-------------
-
-Requires that the ipsec-setup role has been ran first.
-
 Example Playbook
 ----------------
 
