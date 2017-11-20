@@ -1,8 +1,7 @@
 #!/bin/sh
 #
 #
-#	TripleO IPSEC OCF RA. Handles IPSEC tunnels in a TripleO
-#       overcloud.
+#	IPSEC OCF RA. Handles IPSEC tunnels associated with a VIP
 #
 # Copyright (c) 2017 Red Hat Inc.
 #                    All Rights Reserved.
@@ -35,34 +34,46 @@
 
 #######################################################################
 
+# Defaults
+
+OCF_RESKEY_confdir_default="/etc/ipsec.d/"
+: ${OCF_RESKEY_confdir=${OCF_RESKEY_confdir_default}}
+
 meta_data() {
 	cat <<END
 <?xml version="1.0"?>
 <!DOCTYPE resource-agent SYSTEM "ra-api-1.dtd">
-<resource-agent name="tripleo-ipsec">
+<resource-agent name="ipsec">
 <version>1.0</version>
 
 <longdesc lang="en">
-This is a Resource Agent to manage IPSEC tunnels in TripleO.
-It's meant to be collocated with a specific VIP, and will manage
+This is a Resource Agent to manage IPSEC tunnels associated with a Virtual IP
+Address. It's meant to be collocated with a specific VIP, and will manage
 setting up or down a specific tunnel.
 </longdesc>
-<shortdesc lang="en">Handles IPSEC tunnels for TripleO</shortdesc>
+<shortdesc lang="en">Handles IPSEC tunnels for VIPs</shortdesc>
 
 <parameters>
 <parameter name="tunnel" unique="1" required="1">
 <longdesc lang="en">
-The name of the tunnel to be monitored. 
+The name of the tunnel to be monitored.
 </longdesc>
 <shortdesc lang="en">Tunnel name</shortdesc>
 <content type="string" default="" />
 </parameter>
 <parameter name="vip" unique="1" required="1">
 <longdesc lang="en">
-VIP that the tunnel is using.
+Virtual IP address that the tunnel is using.
 </longdesc>
 <shortdesc lang="en">VIP</shortdesc>
 <content type="string" default="" />
+</parameter>
+<parameter name="confdir">
+<longdesc lang="en">
+The directory where the IPSEC tunnel configurations can be found.
+</longdesc>
+<shortdesc lang="en">Tunnel name</shortdesc>
+<content type="string" default="${OCF_RESKEY_confdir_default}" />
 </parameter>
 </parameters>
 
@@ -79,7 +90,7 @@ END
 
 #######################################################################
 
-tripleo_ipsec_usage() {
+ipsec_usage() {
 	cat <<END
 usage: $0 {start|stop|monitor|validate-all|meta-data}
 
@@ -89,7 +100,7 @@ tunnel.
 END
 }
 
-tripleo_ipsec_start() {
+ipsec_start() {
 	ipsec auto --add "${OCF_RESKEY_tunnel}"
 	ipsec whack --listen &>> /tmp/ipsec-agent.log
 	local return_code=$?
@@ -101,18 +112,18 @@ tripleo_ipsec_start() {
 	fi
 }
 
-tripleo_ipsec_stop() {
+ipsec_stop() {
 	ipsec auto --down "${OCF_RESKEY_tunnel}"
 	local return_code=$?
 	ocf_log info "${OCF_RESOURCE_INSTANCE} : Put down tunnel ${OCF_RESKEY_tunnel} with return code ${return_code}"
 	return $OCF_SUCCESS
 }
 
-tripleo_ipsec_monitor() {
+ipsec_monitor() {
 	# Monitor _MUST!_ differentiate correctly between running
 	# (SUCCESS), failed (ERROR) or _cleanly_ stopped (NOT RUNNING).
 	# That is THREE states, not just yes/no.
-	
+
 	ipsec status | grep "$OCF_RESKEY_tunnel" | grep -q unoriented
 	state=$?
 	if [ "$state" == "0" ]; then
@@ -129,9 +140,9 @@ tripleo_ipsec_monitor() {
 	fi
 }
 
-tripleo_ipsec_validate() {
+ipsec_validate() {
 	# The tunnel needs to be defined in the configuration
-	cat /etc/ipsec.d/*.conf | grep -q "conn $OCF_RESKEY_tunnel"
+	cat ${OCF_RESKEY_confdir}/*.conf | grep -q "conn $OCF_RESKEY_tunnel"
 	state=$?
 	if [ "$state" == "0" ]; then
 		return $OCF_SUCCESS
@@ -140,22 +151,19 @@ tripleo_ipsec_validate() {
 	fi
 }
 
-: ${OCF_RESKEY_tunnel=${OCF_RESKEY_tunnel}}
-: ${OCF_RESKEY_vip=${OCF_RESKEY_vip}}
-
 case $__OCF_ACTION in
 meta-data)	meta_data
 		exit $OCF_SUCCESS
 		;;
-start)		tripleo_ipsec_start;;
-stop)		tripleo_ipsec_stop;;
-monitor)	tripleo_ipsec_monitor;;
+start)		ipsec_start;;
+stop)		ipsec_stop;;
+monitor)	ipsec_monitor;;
 reload)		ocf_log info "Reloading ${OCF_RESOURCE_INSTANCE} ..."
 		;;
-usage|help)	tripleo_ipsec_usage
+usage|help)	ipsec_usage
 		exit $OCF_SUCCESS
 		;;
-*)		tripleo_ipsec_usage
+*)		ipsec_usage
 		exit $OCF_ERR_UNIMPLEMENTED
 		;;
 esac

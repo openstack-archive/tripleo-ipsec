@@ -51,7 +51,7 @@
 - name: Install TripleO IPSEC resource agent
   copy:
     src: ipsec-resource-agent.sh
-    dest: /usr/lib/ocf/resource.d/heartbeat/tripleo-ipsec
+    dest: /usr/lib/ocf/resource.d/heartbeat/ipsec
     mode: '0755'
   register: resource_agent
 

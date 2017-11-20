@@ -25,7 +25,7 @@
   - found_resource_agent|succeeded
 
 - name: Add {{ resource_agent_name }} pacemaker resource agent
-  shell: pcs resource create {{ resource_agent_name }} ocf:heartbeat:tripleo-ipsec tunnel={{ specific_tunnel }} vip={{ specific_vip }} --disabled
+  shell: pcs resource create {{ resource_agent_name }} ocf:heartbeat:ipsec tunnel={{ specific_tunnel }} vip={{ specific_vip }} --disabled
   when:
   - pacemaker_running.stdout == 'active'
   - node_hosting_the_vip.stdout == ansible_hostname
