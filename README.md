@@ -23,8 +23,6 @@ Role Variables
   controllers in the cluster and which aren't, and should be part of the
   hostname of the controller. Defaults to: 'controller'. It's highly
   recommended that there's a way to explicitly identify the nodes this way.
-* `ipsec_conf_file`: defines the file where the configuration will be written.
-  Defaults to: /etc/ipsec.d/overcloud-tunnels.conf
 * `ipsec_algorithm`: Defines the encryption algorithm to use in the phase2alg
   configuration option for the tunnels. Defaults to: `aes_gcm128-null`.
   The possible values should be checked in libreswan's documentation.
