@@ -46,27 +46,27 @@
 # between nodes with these. We only need the VIP
 
 - name: Get the overcloud internal API VIP address
-  shell: hiera -c /etc/puppet/hiera.yaml internal_api_virtual_ip
+  command: hiera -c /etc/puppet/hiera.yaml internal_api_virtual_ip
   register: internalapi_vip_register
   changed_when: false
 
 - name: Get the overcloud redis VIP address
-  shell: hiera -c /etc/puppet/hiera.yaml redis_vip
+  command: hiera -c /etc/puppet/hiera.yaml redis_vip
   register: redis_vip_register
   changed_when: false
 
 - name: Get the overcloud storage VIP address
-  shell: hiera -c /etc/puppet/hiera.yaml storage_virtual_ip
+  command: hiera -c /etc/puppet/hiera.yaml storage_virtual_ip
   register: storage_vip_register
   changed_when: false
 
 - name: Get the overcloud storagemgmt VIP address
-  shell: hiera -c /etc/puppet/hiera.yaml storage_mgmt_virtual_ip
+  command: hiera -c /etc/puppet/hiera.yaml storage_mgmt_virtual_ip
   register: storagemgmt_vip_register
   changed_when: false
 
 - name: Get the overcloud ctlplane VIP address
-  shell: hiera -c /etc/puppet/hiera.yaml controller_virtual_ip
+  command: hiera -c /etc/puppet/hiera.yaml controller_virtual_ip
   register: ctlplane_vip_register
   changed_when: false
 
