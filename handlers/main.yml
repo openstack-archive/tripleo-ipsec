@@ -3,7 +3,7 @@
   shell: iptables-save > /etc/sysconfig/iptables
 
 - name: Restore iptables rules
-  shell: iptables-restore
+  command: iptables-restore
 
 - name: Restart ipsec
   service:
