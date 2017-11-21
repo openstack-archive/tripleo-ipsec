@@ -47,7 +47,7 @@
   - Save iptables rules
   - Restore iptables rules
 
-- name: Open INPUT for Protocol 50 - Encapsulated Security Payload (ESP) IPsec packets 
+- name: Open INPUT for Protocol 50 - Encapsulated Security Payload (ESP) IPsec packets
   iptables:
     action: insert
     chain: INPUT
@@ -57,7 +57,7 @@
   - Save iptables rules
   - Restore iptables rules
 
-- name: Open OUTPUT for Protocol 50 - Encapsulated Security Payload (ESP) IPsec packets 
+- name: Open OUTPUT for Protocol 50 - Encapsulated Security Payload (ESP) IPsec packets
   iptables:
     action: insert
     chain: OUTPUT
