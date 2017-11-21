@@ -1,5 +1,6 @@
 ---
-- set_fact:
+- name: Set network based facts for this node and network
+  set_fact:
     network: "{{ item.name }}"
     current_ip: "{{ item.current_ip }}"
     controllers: "{{ item.controllers }}"
