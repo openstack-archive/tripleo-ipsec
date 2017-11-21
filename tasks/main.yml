@@ -20,16 +20,20 @@
 #           ip: <Another actual VIP>
 - include: hardcoded-network-discover.yml
 
+- name: Get pacemaker status
+  systemd:
+    name: pacemaker
+  register: pacemaker_status
+
 - name: Determine if pacemaker is running
-  shell: systemctl is-active pacemaker
-  register: pacemaker_running
-  ignore_errors: yes
+  set_fact:
+    pacemaker_running: pacemaker_status.status.ActiveState == 'active'
 
 # This returns the hostname (short) of the node hosting the VIP
 - name: Determine which node is hosting the VIP
   shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1"\t"$4}' | grep "{{ networks[0]['vips'][0]['ip'] }}" | awk '{print $2}'
   register: node_hosting_the_vip
-  when: pacemaker_running.stdout == 'active'
+  when: pacemaker_running
 
 - name: Add uniqueids = no to ipsec setup configuration
   lineinfile:
