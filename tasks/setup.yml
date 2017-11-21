@@ -1,6 +1,6 @@
 ---
 - name: Install libreswan package
-  yum: name=libreswan state=latest
+  yum: name=libreswan state=present
 
 - name: Initialize ipsec nss database
   command: ipsec initnss
