@@ -1,11 +1,14 @@
 ---
 - name: Save iptables rules
   shell: iptables-save > /etc/sysconfig/iptables
+  become: yes
 
 - name: Restore iptables rules
   command: iptables-restore
+  become: yes
 
 - name: Restart ipsec
   service:
     name: ipsec
     state: restarted
+  become: yes
