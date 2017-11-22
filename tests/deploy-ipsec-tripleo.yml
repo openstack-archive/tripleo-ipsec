@@ -1,6 +1,4 @@
 - hosts: overcloud
   become: true
-  vars_files:
-  - ipsec-psk.yml
   roles:
   - tripleo-ipsec
