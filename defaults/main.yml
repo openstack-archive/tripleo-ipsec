@@ -2,3 +2,4 @@
 overcloud_controller_identifier: controller
 ipsec_algorithm: 'aes_gcm128-null'
 ipsec_skip_firewall_rules: false
+ipsec_uninstall_tunnels: false
