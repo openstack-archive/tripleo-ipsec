@@ -21,7 +21,7 @@ conn overcloud-private-{{ network }}-ip
         narrowing=yes
 {% for other_ip in other_ips %}
 
-conn overcloud-{{ network }}-node-to-node
+conn overcloud-{{ network }}-node-to-node-{{ loop.index0 }}
         type=tunnel
         authby=null
         leftid=%null
