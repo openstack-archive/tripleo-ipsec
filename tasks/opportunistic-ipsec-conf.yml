@@ -8,7 +8,7 @@
   set_fact:
     current_ip: "{{ hostvars[inventory_hostname][ip_var_key] }}"
 
-- when: current_ip != ctlplane_ip
+- when: current_ip != ctlplane_ip or network == 'ctlplane'
   block:
   - name: Set IP with prefix register
     shell: "ip addr show | grep {{ current_ip }} | awk '{print $2}'"

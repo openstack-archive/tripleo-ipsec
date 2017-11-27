@@ -11,3 +11,8 @@
   with_items: "{{ private_networks }}"
   vars:
     policy: private
+
+- include: opportunistic-ipsec-conf.yml
+  with_items: "{{ private_or_clear_networks }}"
+  vars:
+    policy: private-or-clear
