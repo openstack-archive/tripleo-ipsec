@@ -1,0 +1,45 @@
+---
+- name: Set network name fact
+  set_fact:
+    network: "{{ item }}"
+    ip_var_key: "{{ item + '_ip' }}"
+
+- name: Set current IP fact
+  set_fact:
+    current_ip: "{{ hostvars[inventory_hostname][ip_var_key] }}"
+
+- name: Set other IPs fact
+  set_fact:
+    other_ips: "{{ hostvars|json_query(other_ips_query)|difference([current_ip]) }}"
+  vars:
+    other_ips_query: '*.{{ ip_var_key }}'
+
+- name: Set IP with prefix register
+  shell: "ip addr show | grep {{ current_ip }} | awk '{print $2}'"
+  register:
+    ip_with_prefix_register
+
+- name: Set net CIDR fact
+  set_fact:
+    current_net: "{{ ip_with_prefix_register.stdout | ipaddr('network') }}"
+    current_prefix: "{{ ip_with_prefix_register.stdout | ipaddr('prefix') }}"
+
+- name: Write ipsec tunnel configuration for the {{ network }} network
+  template:
+    src: ipsec-opportunistic-private.conf.j2
+    dest: /etc/ipsec.d/overcloud-{{ network }}-opportunistic-private-tunnels.conf
+    mode: '0640'
+  when: other_ips != []
+  notify:
+  - Restart ipsec
+
+- name: Write ipsec tunnel policy for the {{ network }} network
+  template:
+    src: policy.j2
+    dest: /etc/ipsec.d/policies/overcloud-private-{{ network }}-ip
+    mode: '0640'
+  vars:
+    net_with_prefix: "{{ current_net + '/' + current_prefix }}"
+  when: other_ips != []
+  notify:
+  - Restart ipsec

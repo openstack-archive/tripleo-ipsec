@@ -1,0 +1,67 @@
+---
+# This contains the "legacy" code for setting up IPSEC tunnels before
+# IPSEC 3.20
+
+- name: Check for PSK variable
+  fail:
+    msg: Please provide the PSK key via the 'ipsec_psk' variable
+  when: ipsec_psk is not defined
+
+# This gets the network information, which should come in a structure
+# with the following format:
+#
+#   networks:
+#     - name: <Network name>
+#       current_ip: <The IP of this node for this network>
+#       controllers: <The IPs for this network for the rest of the controllers>
+#       vips:
+#         - name: <Name of the VIP for this network>
+#           ip: <Actual VIP>
+#         - name: <Another name of the VIP for this network>
+#           ip: <Another actual VIP>
+- include: hardcoded-network-discover.yml
+
+- name: Get pacemaker status
+  systemd:
+    name: pacemaker
+  register: pacemaker_status
+
+- name: Determine if pacemaker is running
+  set_fact:
+    pacemaker_running: pacemaker_status.status.ActiveState == 'active'
+
+# This returns the hostname (short) of the node hosting the VIP
+- name: Determine which node is hosting the VIP
+  shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1"\t"$4}' | grep "{{ networks[0]['vips'][0]['ip'] }}" | awk '{print $2}'
+  register: node_hosting_the_vip
+  when: pacemaker_running
+
+- name: Add uniqueids = no to ipsec setup configuration
+  lineinfile:
+    dest: /etc/ipsec.conf
+    regexp: '^\s+uniqueids'
+    insertafter: '^config setup'
+    line: "\tuniqueids=no"
+  notify:
+  - Restart ipsec
+
+- include: legacy-ipsec-conf.yml
+  with_items: "{{ networks }}"
+
+- include: firewall.yml
+  when: not ipsec_skip_firewall_rules
+
+- meta: flush_handlers
+
+# Permissions gotten from http://www.linux-ha.org/doc/dev-guides/_installing_and_packaging_resource_agents.html
+- name: Install TripleO IPSEC resource agent
+  copy:
+    src: ipsec-resource-agent.sh
+    dest: /usr/lib/ocf/resource.d/heartbeat/ipsec
+    mode: '0755'
+  register: resource_agent
+
+# This queries the VIPs for all networks and flattens them into a list
+# that contains a dict with the "name" and "ip" for each VIP entry.
+- include: resource-agent.yml
+  with_items: "{{ networks|default([])|json_query('[*].vips[]')|list }}"

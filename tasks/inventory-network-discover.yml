@@ -1,0 +1,34 @@
+---
+#
+# This gets the network related information of the nodes from variables provided by
+# the dynamic inventory.
+
+- name: Set the networks IPs facts
+  set_fact:
+    networks:
+      - name: internalapi
+        current_ip: "{{current_internalapi_ip_register.stdout}}"
+        controllers: "{{internalapi_controllers_register.stdout_lines}}"
+        vips:
+          - name: internalapi
+            ip: "{{internalapi_vip_register.stdout}}"
+          - name: redis
+            ip: "{{redis_vip_register.stdout}}"
+      - name: storage
+        current_ip: "{{current_storage_ip_register.stdout}}"
+        controllers: "{{storage_controllers_register.stdout_lines}}"
+        vips:
+          - name: storage
+            ip: "{{storage_vip_register.stdout}}"
+      - name: storagemgmt
+        current_ip: "{{current_storagemgmt_ip_register.stdout}}"
+        controllers: "{{storagemgmt_controllers_register.stdout_lines}}"
+        vips:
+          - name: storagemgmt
+            ip: "{{storagemgmt_vip_register.stdout}}"
+      - name: ctlplane
+        current_ip: "{{current_ctlplane_ip_register.stdout}}"
+        controllers: []
+        vips:
+          - name: ctlplane
+            ip: "{{ctlplane_vip_register.stdout}}"
