@@ -9,3 +9,5 @@
 
 - include: opportunistic-ipsec-conf.yml
   with_items: "{{ private_networks }}"
+  vars:
+    policy: private
