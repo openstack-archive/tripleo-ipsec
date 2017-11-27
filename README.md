@@ -28,6 +28,10 @@ Role Variables
   The possible values should be checked in libreswan's documentation.
 * `ipsec_skip_firewall_rules`: Determines whether the role should skip
   or not the firewall rules. Defaults to: `false`.
+* `iipsec_install_legacy`: Determines whether the role should attempt to install
+  or not the legacy tunnel options. Note that the legacy tunnels are not used
+  if `enabled_networks` is provided as a variable; meaning that the role will rely
+  on the TripleO dynamic inventory. Defaults to: `true`.
 
 Example Playbook
 ----------------

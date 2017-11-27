@@ -4,7 +4,7 @@
   - include: setup.yml
 
   - include: legacy.yml
-    when: enabled_networks is not defined
+    when: enabled_networks is not defined and ipsec_install_legacy|bool
 
   - include: opportunistic-ipsec.yml
     when: enabled_networks is defined
