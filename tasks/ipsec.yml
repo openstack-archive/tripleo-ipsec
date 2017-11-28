@@ -1,4 +1,5 @@
 ---
+# This tasks rely on TripleO's dynamic inventory being used.
 - name: Set private-or-clear networks fact
   set_fact:
     private_or_clear_networks: ["ctlplane"]

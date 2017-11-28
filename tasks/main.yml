@@ -19,8 +19,10 @@
   block:
   - include: setup.yml
 
+  # This doesn't use the dynamic inventory
   - include: legacy.yml
     when: enabled_networks is not defined and ipsec_install_legacy|bool
 
-  - include: opportunistic-ipsec.yml
+  # This uses the dynamic inventory
+  - include: ipsec.yml
     when: enabled_networks is defined
