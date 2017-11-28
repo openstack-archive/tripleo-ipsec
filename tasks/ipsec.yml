@@ -8,12 +8,14 @@
   set_fact:
     private_networks: "{{ enabled_networks|difference(private_or_clear_networks) }}"
 
-- include: opportunistic-ipsec-conf.yml
+- include: ipsec-conf.yml
   with_items: "{{ private_networks }}"
   vars:
     policy: private
+    type: opportunistic
 
-- include: opportunistic-ipsec-conf.yml
+- include: ipsec-conf.yml
   with_items: "{{ private_or_clear_networks }}"
   vars:
     policy: private-or-clear
+    type: opportunistic

@@ -2,6 +2,9 @@
 - name: Set network name fact
   set_fact:
     network: "{{ item }}"
+
+- name: Set IP/VIP variable key facts
+  set_fact:
     ip_var_key: "{{ item + '_ip' }}"
 
 - name: Set current IP fact
@@ -30,8 +33,8 @@
 
   - name: Write ipsec tunnel configuration for the {{ network }} network
     template:
-      src: ipsec-opportunistic-{{ policy }}.conf.j2
-      dest: /etc/ipsec.d/overcloud-{{ network }}-opportunistic-{{ policy }}-tunnels.conf
+      src: ipsec-{{ type }}-{{ policy }}.conf.j2
+      dest: /etc/ipsec.d/overcloud-{{ network }}-{{ type }}-{{ policy }}-tunnels.conf
       mode: '0640'
     when: other_ips != []
     notify:
@@ -43,5 +46,6 @@
       dest: /etc/ipsec.d/policies/overcloud-{{ policy }}-{{ network }}-ip
       mode: '0640'
     when: other_ips != []
+    when: type == 'opportunistic'
     notify:
     - Restart ipsec
