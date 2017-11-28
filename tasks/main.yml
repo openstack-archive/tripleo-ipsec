@@ -1,14 +1,4 @@
 ---
-- when: not ipsec_uninstall_tunnels|bool
-  block:
-  - include: setup.yml
-
-  - include: legacy.yml
-    when: enabled_networks is not defined and ipsec_install_legacy|bool
-
-  - include: opportunistic-ipsec.yml
-    when: enabled_networks is defined
-
 - when: ipsec_uninstall_tunnels|bool
   block:
   - name: Find tunnel configurations to delete
@@ -24,3 +14,13 @@
     with_items: "{{ files_to_delete.files }}"
     notify:
     - Restart ipsec
+
+- when: not ipsec_uninstall_tunnels|bool
+  block:
+  - include: setup.yml
+
+  - include: legacy.yml
+    when: enabled_networks is not defined and ipsec_install_legacy|bool
+
+  - include: opportunistic-ipsec.yml
+    when: enabled_networks is defined
