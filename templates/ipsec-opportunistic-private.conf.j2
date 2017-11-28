@@ -9,6 +9,7 @@ conn overcloud-private-{{ network }}-ip
         rightid=%null
         left={{ current_ip }}
         right=%opportunisticgroup
+        rightmodecfgclient=yes
         negotiationshunt=hold
         failureshunt=drop
         ikev2=insist
