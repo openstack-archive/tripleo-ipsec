@@ -1,4 +1,10 @@
 ---
+# NOTE: This is only here because we currently don't have pluggable auth.
+- name: Check for PSK variable
+  fail:
+    msg: Please provide the PSK key via the 'ipsec_psk' variable
+  when: ipsec_psk is not defined
+
 - name: Set network name fact
   set_fact:
     network: "{{ item }}"
