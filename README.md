@@ -19,24 +19,25 @@ Role Variables
   securely on the host where the playbook runs from, e.g. using Ansible Vault.
   One can generate this variable with the following command:
   `openssl rand -base64 48`
-* `overcloud_controller_identifier`: This identifies which nodes are
-  controllers in the cluster and which aren't, and should be part of the
-  hostname of the controller. Defaults to: 'controller'. It's highly
-  recommended that there's a way to explicitly identify the nodes this way.
 * `ipsec_algorithm`: Defines the encryption algorithm to use in the phase2alg
   configuration option for the tunnels. Defaults to: `aes_gcm128-null`.
   The possible values should be checked in libreswan's documentation.
 * `ipsec_skip_firewall_rules`: Determines whether the role should skip
   or not the firewall rules. Defaults to: `false`.
-* `ipsec_install_legacy`: Determines whether the role should attempt to install
-  or not the legacy tunnel options. Note that the legacy tunnels are not used
-  if `enabled_networks` is provided as a variable; meaning that the role will rely
-  on the TripleO dynamic inventory. Defaults to: `true`.
 * `ipsec_uninstall_tunnels`: Determines whether the role should remove the IPSEC
   tunnels that were previously set. Defaults to: `false`.
 * `ipsec_upgrade_tunnels`: Determines whether the role should upgrade the IPSEC
   tunnels that were previously set. This means it'll remove all the tunnels
   created in a previous run and replace them. Defaults to: `false`.
+* `ipsec_install_legacy`: Determines whether the role should attempt to install
+  or not the legacy tunnel options. Note that the legacy tunnels are not used
+  if `enabled_networks` is provided as a variable; meaning that the role will rely
+  on the TripleO dynamic inventory. Defaults to: `true`.
+* `overcloud_controller_identifier`: This identifies which nodes are
+  controllers in the cluster and which aren't, and should be part of the
+  hostname of the controller. Defaults to: 'controller'. It's highly
+  recommended that there's a way to explicitly identify the nodes this way.
+  Note that this is only used in the legacy setup.
 
 Example Playbook
 ----------------
