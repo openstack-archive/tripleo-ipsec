@@ -6,10 +6,21 @@
 - name: Set IP/VIP variable key facts
   set_fact:
     ip_var_key: "{{ item + '_ip' }}"
+    vip_var_key: "{{ item + '_vip' }}"
 
 - name: Set current IP fact
   set_fact:
     current_ip: "{{ hostvars[inventory_hostname][ip_var_key] }}"
+
+
+- name: Get pacemaker status
+  systemd:
+    name: pacemaker
+  register: pacemaker_status
+
+- name: Determine if pacemaker is running
+  set_fact:
+    pacemaker_running: pacemaker_status.status.ActiveState == 'active'
 
 - when: current_ip != ctlplane_ip or network == 'ctlplane'
   block:
@@ -31,6 +42,21 @@
     vars:
       other_ips_query: '*.{{ ip_var_key }}'
 
+  - name: Set VIP fact
+    set_fact:
+      current_vip:
+        name: "{{ network }}"
+        ip: "{{ hostvars[inventory_hostname][vip_var_key]|default('') }}"
+
+  - name: Remove {{ network}} from virtual-private setting in ipsec setup configuration
+    replace:
+      path: /etc/ipsec.conf
+      regexp: '(^\s+.*)%v4:{{ current_subnet|regex_replace("\.", "\.") }},(.*)$'
+      replace: '\1\2'
+      backup: yes
+    notify:
+    - Restart ipsec
+
   - name: Write ipsec tunnel configuration for the {{ network }} network
     template:
       src: ipsec-{{ type }}-{{ policy }}.conf.j2
@@ -45,7 +71,8 @@
       src: policy.j2
       dest: /etc/ipsec.d/policies/overcloud-{{ policy }}-{{ network }}-ip
       mode: '0640'
-    when: other_ips != []
-    when: type == 'opportunistic'
+    when:
+    - other_ips != []
+    - type == 'opportunistic'
     notify:
     - Restart ipsec

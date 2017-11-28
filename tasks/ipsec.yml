@@ -8,14 +8,28 @@
   set_fact:
     private_networks: "{{ enabled_networks|difference(private_or_clear_networks) }}"
 
+- name: Are we using Opportunistic IPSEC tunnels?
+  set_fact:
+    ipsec_type: opportunistic
+  when: use_opportunistic_ipsec|bool
+
+- name: Are we using node-to-node IPSEC tunnels?
+  set_fact:
+    ipsec_type: node-to-node
+  when: not use_opportunistic_ipsec|bool
+
 - include: ipsec-conf.yml
   with_items: "{{ private_networks }}"
   vars:
     policy: private
-    type: opportunistic
+    type: "{{ ipsec_type }}"
 
+# Unfortunately the ctlplane currently has issues when non-opportunistic
+# tunnels are used. It will reject any connection and hold packets for
+# some reason.
 - include: ipsec-conf.yml
   with_items: "{{ private_or_clear_networks }}"
   vars:
     policy: private-or-clear
-    type: opportunistic
+    type: "{{ ipsec_type }}"
+  when: use_opportunistic_ipsec|bool
