@@ -4,3 +4,4 @@ ipsec_algorithm: 'aes_gcm128-null'
 ipsec_skip_firewall_rules: false
 ipsec_uninstall_tunnels: false
 ipsec_install_legacy: true
+ipsec_upgrade_tunnels: false

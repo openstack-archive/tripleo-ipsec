@@ -1,5 +1,5 @@
 ---
-- when: ipsec_uninstall_tunnels|bool
+- when: ipsec_uninstall_tunnels|bool or ipsec_upgrade_tunnels|bool
   block:
   - name: Find tunnel configurations to delete
     find:
@@ -15,7 +15,7 @@
     notify:
     - Restart ipsec
 
-- when: not ipsec_uninstall_tunnels|bool
+- when: not ipsec_uninstall_tunnels|bool or ipsec_upgrade_tunnels|bool
   block:
   - include: setup.yml
 

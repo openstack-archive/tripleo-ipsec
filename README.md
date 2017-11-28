@@ -34,6 +34,9 @@ Role Variables
   on the TripleO dynamic inventory. Defaults to: `true`.
 * `ipsec_uninstall_tunnels`: Determines whether the role should remove the IPSEC
   tunnels that were previously set. Defaults to: `false`.
+* `ipsec_upgrade_tunnels`: Determines whether the role should upgrade the IPSEC
+  tunnels that were previously set. This means it'll remove all the tunnels
+  created in a previous run and replace them. Defaults to: `false`.
 
 Example Playbook
 ----------------
