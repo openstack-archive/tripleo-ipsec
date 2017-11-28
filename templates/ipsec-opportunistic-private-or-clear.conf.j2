@@ -23,23 +23,3 @@ conn overcloud-private-or-clear-{{ network }}-ip
         leftmodecfgclient=yes
         leftcat=yes
         narrowing=yes
-{% for other_ip in other_ips %}
-
-conn overcloud-{{ network }}-node-to-node-{{ loop.index0 }}
-        type=tunnel
-        authby=null
-        leftid=%null
-        rightid=%null
-        left={{ current_ip }}
-        right={{ other_ip }}
-        negotiationshunt=drop
-        failureshunt=passthrough
-        ikev2=insist
-        auto=start
-        keyingtries=1
-        retransmit-timeout=2s
-        # To support being behind NAT
-        leftmodecfgclient=yes
-        leftcat=yes
-        narrowing=yes
-{% endfor %}
