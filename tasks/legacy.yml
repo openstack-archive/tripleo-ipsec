@@ -28,7 +28,7 @@
 
 - name: Determine if pacemaker is running
   set_fact:
-    pacemaker_running: pacemaker_status.status.ActiveState == 'active'
+    pacemaker_running: "{{ pacemaker_status.status.ActiveState == 'active' }}"
 
 # This returns the hostname (short) of the node hosting the VIP
 - name: Determine which node is hosting the VIP

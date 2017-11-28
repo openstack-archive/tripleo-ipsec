@@ -20,7 +20,7 @@
 
 - name: Determine if pacemaker is running
   set_fact:
-    pacemaker_running: pacemaker_status.status.ActiveState == 'active'
+    pacemaker_running: "{{ pacemaker_status.status.ActiveState == 'active' }}"
 
 - when: current_ip != ctlplane_ip or network == 'ctlplane'
   block:
@@ -74,5 +74,23 @@
     when:
     - other_ips != []
     - type == 'opportunistic'
+    notify:
+    - Restart ipsec
+
+  - name: Write VIP ipsec secrets file for the {{ network }} network
+    template:
+      src: ipsec-vip-tunnels.secrets.j2
+      dest: /etc/ipsec.d/overcloud-{{ current_vip.name }}-vip-tunnels.secrets
+      mode: '0600'
+    when: current_vip.ip != '' and pacemaker_running and type != 'opportunistic'
+    notify:
+    - Restart ipsec
+
+  - name: Write VIP ipsec tunnel configuration for the {{ network }} network
+    template:
+      src: ipsec-vip-tunnels.conf.j2
+      dest: /etc/ipsec.d/overcloud-{{ current_vip.name }}-vip-tunnels.conf
+      mode: '0640'
+    when: current_vip.ip != '' and pacemaker_running and type != 'opportunistic'
     notify:
     - Restart ipsec

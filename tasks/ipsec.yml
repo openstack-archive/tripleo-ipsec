@@ -18,6 +18,16 @@
     ipsec_type: node-to-node
   when: not use_opportunistic_ipsec|bool
 
+- name: Add uniqueids = no to ipsec setup configuration
+  lineinfile:
+    dest: /etc/ipsec.conf
+    regexp: '^\s+uniqueids'
+    insertafter: '^config setup'
+    line: "\tuniqueids=no"
+  when: not use_opportunistic_ipsec|bool
+  notify:
+  - Restart ipsec
+
 - include: ipsec-conf.yml
   with_items: "{{ private_networks }}"
   vars:
