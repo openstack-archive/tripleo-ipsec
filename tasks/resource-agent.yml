@@ -15,13 +15,11 @@
   register: found_resource_agent
   when:
   - pacemaker_running
-  - node_hosting_the_vip.stdout == ansible_hostname
 
 - name: Delete {{ resource_agent_name }} Resource Agent
   command: pcs resource delete {{ resource_agent_name }}
   when:
   - pacemaker_running
-  - node_hosting_the_vip.stdout == ansible_hostname
   - resource_agent.changed
   - found_resource_agent|succeeded
 
@@ -29,26 +27,22 @@
   command: pcs resource create {{ resource_agent_name }} ocf:heartbeat:ipsec tunnel={{ specific_tunnel }} vip={{ specific_vip }} --disabled
   when:
   - pacemaker_running
-  - node_hosting_the_vip.stdout == ansible_hostname
   - resource_agent.changed or found_resource_agent|failed
 
 - name: Add collocation rule with VIP ( {{ resource_agent_name }} )
   command: pcs constraint colocation add {{ resource_agent_name }} with ip-{{ specific_vip }}
   when:
   - pacemaker_running
-  - node_hosting_the_vip.stdout == ansible_hostname
   - resource_agent.changed or found_resource_agent|failed
 
 - name: Add ordering rule with VIP ( {{ resource_agent_name }} )
   command: pcs constraint order start ip-{{ specific_vip }} then {{ resource_agent_name }}
   when:
   - pacemaker_running
-  - node_hosting_the_vip.stdout == ansible_hostname
   - resource_agent.changed or found_resource_agent|failed
 
 - name: Enable {{ resource_agent_name }} resource agent
   command: pcs resource enable {{ resource_agent_name }}
   when:
   - pacemaker_running
-  - node_hosting_the_vip.stdout == ansible_hostname
   - resource_agent.changed or found_resource_agent|failed

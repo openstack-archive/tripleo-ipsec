@@ -68,3 +68,4 @@
   loop_control:
     loop_var: current_vip
   with_items: "{{ networks|default([])|json_query('[*].vips[]')|list }}"
+  when: node_hosting_the_vip.stdout == ansible_hostname
