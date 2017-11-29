@@ -11,6 +11,13 @@ In a final step, when pacemaker is enabled, it enables resource agents for each
 Virtual IP which puts up/tears down IPSEC tunnels depending on the VIP
 location.
 
+Note that as of the latest code, this now relies on the usage of TripleO's
+dynamic inventory. This means that it expects the inventory to tell the role
+which networks are being set and which IPs do the hosts have. If the relevant
+variables don't come from the inventory, the role will attempt to use the legacy
+setup which autodiscovers these. However, this setup is not very reliable if
+you're using custom networks. 
+
 Role Variables
 --------------
 
