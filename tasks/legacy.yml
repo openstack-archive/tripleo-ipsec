@@ -65,4 +65,6 @@
 # This queries the VIPs for all networks and flattens them into a list
 # that contains a dict with the "name" and "ip" for each VIP entry.
 - include: resource-agent.yml
+  loop_control:
+    loop_var: current_vip
   with_items: "{{ networks|default([])|json_query('[*].vips[]')|list }}"

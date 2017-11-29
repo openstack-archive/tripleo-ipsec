@@ -1,13 +1,13 @@
 ---
 # This file means to be a generic way to add resource agents for VIPs
 # The following are assumed to be passed in a loop:
-# * item.name: Name of the network
-# * item.ip: the VIP
+# * current_vip.name: Name of the network
+# * current_vip.ip: the VIP
 - name: Set specific resource agent facts
   set_fact:
-    resource_agent_name: tripleo-ipsec-{{ item.name }}
-    specific_tunnel: overcloud-{{ item.name }}-vip-tunnel
-    specific_vip: "{{ item.ip }}"
+    resource_agent_name: tripleo-ipsec-{{ current_vip.name }}
+    specific_tunnel: overcloud-{{ current_vip.name }}-vip-tunnel
+    specific_vip: "{{ current_vip.ip }}"
 
 - name: Was the {{ resource_agent_name }} Resource Agent added already?
   command: pcs resource show {{ resource_agent_name }}
