@@ -35,8 +35,8 @@
 
   # This doesn't use the dynamic inventory
   - include: legacy.yml
-    when: enabled_networks is not defined and ipsec_install_legacy|bool
+    when: enabled_networks is not defined or ipsec_force_install_legacy|bool
 
   # This uses the dynamic inventory
   - include: ipsec.yml
-    when: enabled_networks is defined
+    when: enabled_networks is defined and not ipsec_force_install_legacy|bool

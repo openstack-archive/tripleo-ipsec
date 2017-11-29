@@ -36,10 +36,7 @@ Role Variables
 * `ipsec_upgrade_tunnels`: Determines whether the role should upgrade the IPSEC
   tunnels that were previously set. This means it'll remove all the tunnels
   created in a previous run and replace them. Defaults to: `false`.
-* `ipsec_install_legacy`: Determines whether the role should attempt to install
-  or not the legacy tunnel options. Note that the legacy tunnels are not used
-  if `enabled_networks` is provided as a variable; meaning that the role will rely
-  on the TripleO dynamic inventory. Defaults to: `true`.
+* `ipsec_force_install_legacy`: Forces the legacy installation. Defaults to: `false`.
 * `overcloud_controller_identifier`: This identifies which nodes are
   controllers in the cluster and which aren't, and should be part of the
   hostname of the controller. Defaults to: 'controller'. It's highly
