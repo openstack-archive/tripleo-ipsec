@@ -59,6 +59,7 @@
     src: ipsec-resource-agent.sh
     dest: /usr/lib/ocf/resource.d/heartbeat/ipsec
     mode: '0755'
+    force: no
   register: resource_agent
 
 # This queries the VIPs for all networks and flattens them into a list
