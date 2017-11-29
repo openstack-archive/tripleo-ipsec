@@ -93,3 +93,10 @@
     when: current_vip.ip != '' and type != 'opportunistic'
     notify:
     - Restart ipsec
+
+  - include: resource-agent.yml
+    when:
+    - pacemaker_running
+    - type != 'opportunistic'
+    - current_vip.ip != ''
+    - inventory_hostname == groups['pacemaker'][0]
