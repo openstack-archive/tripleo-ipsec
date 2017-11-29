@@ -100,3 +100,4 @@
     - type != 'opportunistic'
     - current_vip.ip != ''
     - inventory_hostname == groups['pacemaker'][0]
+    - ipsec_setup_resource_agents|bool

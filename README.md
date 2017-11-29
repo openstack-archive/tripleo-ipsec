@@ -36,6 +36,8 @@ Role Variables
 * `ipsec_upgrade_tunnels`: Determines whether the role should upgrade the IPSEC
   tunnels that were previously set. This means it'll remove all the tunnels
   created in a previous run and replace them. Defaults to: `false`.
+* `ipsec_setup_resource_agents`: Determines whether the role should create the
+  pacemaker resource agents or not. Defaults to: `true`.
 * `ipsec_force_install_legacy`: Forces the legacy installation. Defaults to: `false`.
 * `overcloud_controller_identifier`: This identifies which nodes are
   controllers in the cluster and which aren't, and should be part of the
