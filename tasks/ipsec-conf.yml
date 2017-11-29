@@ -28,6 +28,9 @@
   set_fact:
     pacemaker_running: "{{ pacemaker_status.status.ActiveState == 'active' }}"
 
+# This effectively skips the configuration if we're in a network that's
+# not actually enabled. We can notice that if the IP has fallen back to
+# the control plane's IP.
 - when: current_ip != ctlplane_ip or network == 'ctlplane'
   block:
   - name: Set IP with prefix register
