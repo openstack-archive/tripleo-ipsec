@@ -28,6 +28,15 @@
   notify:
   - Restart ipsec
 
+# Permissions gotten from http://www.linux-ha.org/doc/dev-guides/_installing_and_packaging_resource_agents.html
+- name: Install TripleO IPSEC resource agent
+  copy:
+    src: ipsec-resource-agent.sh
+    dest: /usr/lib/ocf/resource.d/heartbeat/ipsec
+    mode: '0755'
+    force: no
+  register: resource_agent
+
 - include: ipsec-conf.yml
   with_items: "{{ private_networks }}"
   vars:
