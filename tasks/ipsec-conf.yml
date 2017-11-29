@@ -18,16 +18,6 @@
   set_fact:
     current_ip: "{{ hostvars[inventory_hostname][ip_var_key] }}"
 
-
-- name: Get pacemaker status
-  systemd:
-    name: pacemaker
-  register: pacemaker_status
-
-- name: Determine if pacemaker is running
-  set_fact:
-    pacemaker_running: "{{ pacemaker_status.status.ActiveState == 'active' }}"
-
 # This effectively skips the configuration if we're in a network that's
 # not actually enabled. We can notice that if the IP has fallen back to
 # the control plane's IP.

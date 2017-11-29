@@ -28,6 +28,15 @@
   notify:
   - Restart ipsec
 
+- name: Get pacemaker status
+  systemd:
+    name: pacemaker
+  register: pacemaker_status
+
+- name: Determine if pacemaker is running
+  set_fact:
+    pacemaker_running: "{{ pacemaker_status.status.ActiveState == 'active' }}"
+
 # Permissions gotten from http://www.linux-ha.org/doc/dev-guides/_installing_and_packaging_resource_agents.html
 - name: Install TripleO IPSEC resource agent
   copy:
@@ -36,6 +45,7 @@
     mode: '0755'
     force: no
   register: resource_agent
+  when: pacemaker_running
 
 - include: ipsec-conf.yml
   with_items: "{{ private_networks }}"

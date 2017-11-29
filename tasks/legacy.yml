@@ -61,6 +61,7 @@
     mode: '0755'
     force: no
   register: resource_agent
+  when: pacemaker_running
 
 # This queries the VIPs for all networks and flattens them into a list
 # that contains a dict with the "name" and "ip" for each VIP entry.
