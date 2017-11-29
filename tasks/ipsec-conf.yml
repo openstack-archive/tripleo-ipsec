@@ -81,7 +81,7 @@
       src: ipsec-vip-tunnels.secrets.j2
       dest: /etc/ipsec.d/overcloud-{{ current_vip.name }}-vip-tunnels.secrets
       mode: '0600'
-    when: current_vip.ip != '' and pacemaker_running and type != 'opportunistic'
+    when: current_vip.ip != '' and type != 'opportunistic'
     notify:
     - Restart ipsec
 
@@ -90,6 +90,6 @@
       src: ipsec-vip-tunnels.conf.j2
       dest: /etc/ipsec.d/overcloud-{{ current_vip.name }}-vip-tunnels.conf
       mode: '0640'
-    when: current_vip.ip != '' and pacemaker_running and type != 'opportunistic'
+    when: current_vip.ip != '' and type != 'opportunistic'
     notify:
     - Restart ipsec
