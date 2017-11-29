@@ -1,6 +1,7 @@
 ---
 # This file means to be a generic way to add resource agents for VIPs
-# The following are assumed to be passed in a loop:
+# The following are assumed to be passed:
+#
 # * current_vip.name: Name of the network
 # * current_vip.ip: the VIP
 - name: Set specific resource agent facts
