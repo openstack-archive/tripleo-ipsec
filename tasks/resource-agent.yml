@@ -14,6 +14,7 @@
   command: pcs resource show {{ resource_agent_name }}
   ignore_errors: yes
   register: found_resource_agent
+  changed_when: found_resource_agent|failed
 
 - name: Delete {{ resource_agent_name }} Resource Agent
   command: pcs resource delete {{ resource_agent_name }}
