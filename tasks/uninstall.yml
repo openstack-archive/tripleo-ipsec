@@ -1,0 +1,28 @@
+---
+- name: Find tunnel configurations to delete
+  find:
+    paths: /etc/ipsec.d/
+    patterns: overcloud-*
+  register: configs_to_delete
+
+- name: Remove tunnel configurations
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ configs_to_delete.files }}"
+  notify:
+  - Restart ipsec
+
+- name: Find policy configurations to delete
+  find:
+    paths: /etc/ipsec.d/policies/
+    patterns: overcloud-*
+  register: policies_to_delete
+
+- name: Remove tunnel configurations
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ policies_to_delete.files }}"
+  notify:
+  - Restart ipsec
