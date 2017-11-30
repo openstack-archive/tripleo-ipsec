@@ -56,15 +56,6 @@
     notify:
     - Restart ipsec
 
-  - name: Write ipsec tunnel configuration for the {{ network }} network
-    template:
-      src: ipsec-{{ type }}-{{ policy }}.conf.j2
-      dest: /etc/ipsec.d/overcloud-{{ network }}-{{ type }}-{{ policy }}-tunnels.conf
-      mode: '0640'
-    when: other_ips != []
-    notify:
-    - Restart ipsec
-
   - name: Write ipsec tunnel policy for the {{ network }} network
     template:
       src: policy.j2
@@ -73,6 +64,26 @@
     when:
     - other_ips != []
     - type == 'opportunistic'
+    notify:
+    - Restart ipsec
+
+  - name: Write ipsec tunnel secrets for the {{ network }} network
+    template:
+      src: ipsec-{{ type }}-tunnels.secrets.j2
+      dest: /etc/ipsec.d/overcloud-{{ network }}-{{ type }}-tunnels.secrets
+      mode: '0600'
+    when:
+    - other_ips != []
+    - type != 'opportunistic'
+    notify:
+    - Restart ipsec
+
+  - name: Write ipsec tunnel configuration for the {{ network }} network
+    template:
+      src: ipsec-{{ type }}-{{ policy }}.conf.j2
+      dest: /etc/ipsec.d/overcloud-{{ network }}-{{ type }}-{{ policy }}-tunnels.conf
+      mode: '0640'
+    when: other_ips != []
     notify:
     - Restart ipsec
 

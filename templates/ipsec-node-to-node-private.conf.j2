@@ -6,10 +6,10 @@
 
 conn overcloud-private-node-to-node-{{ network }}-ip-{{ loop.index0 }}
         type=tunnel
-        authby=null
-        leftid=%null
-        rightid=%null
+        authby=secret
+        leftid={{ current_ip }}
         left={{ current_ip }}
+        rightid={{ other_ip }}
         right={{ other_ip }}
         failureshunt=drop
         ikev2=insist
