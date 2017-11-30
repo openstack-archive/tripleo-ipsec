@@ -1,11 +1,13 @@
 tripleo-ipsec
 =============
 
-This sets up packages and firewall settings.
+Ansible role to configure IPSEC tunnels for TripleO
 
-Sets the configuration for the IPSEC tunnels in the overcloud nodes.
+* This sets up packages and firewall settings.
 
-Parses the given configuration file and starts the IPSEC tunnels.
+* Sets the configuration for the IPSEC tunnels in the overcloud nodes.
+
+* Parses the given configuration file and starts the IPSEC tunnels.
 
 In a final step, when pacemaker is enabled, it enables resource agents for each
 Virtual IP which puts up/tears down IPSEC tunnels depending on the VIP
