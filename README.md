@@ -18,7 +18,7 @@ dynamic inventory. This means that it expects the inventory to tell the role
 which networks are being set and which IPs do the hosts have. If the relevant
 variables don't come from the inventory, the role will attempt to use the legacy
 setup which autodiscovers these. However, this setup is not very reliable if
-you're using custom networks. 
+you're using custom networks.
 
 Role Variables
 --------------
