@@ -75,9 +75,6 @@ ipsec_psk: $(openssl rand -base64 48)
 EOF
 ```
 
-Note that for convenience I put the file in a path that's reachable for
-ansible. And this name is necessary, as it's written directly to the playbook.
-
 Encrypt the file with ansible-vault (note that it'll prompt for a password):
 
 ```
@@ -88,7 +85,7 @@ Having done this, now you can run the playbook:
 
 ```
 ansible-playbook -i /usr/bin/tripleo-ansible-inventory --ask-vault-pass \
-	tests/deploy-ipsec-tripleo.yml
+	-e @ipsec-psk.yml tests/deploy-ipsec-tripleo.yml
 ```
 
 Generating an inventory
