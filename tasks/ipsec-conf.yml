@@ -105,7 +105,7 @@
     notify:
     - Restart ipsec
 
-  - include: resource-agent.yml
+  - include_tasks: resource-agent.yml
     when:
     - pacemaker_running
     - type != 'opportunistic'

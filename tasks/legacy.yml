@@ -19,7 +19,7 @@
 #           ip: <Actual VIP>
 #         - name: <Another name of the VIP for this network>
 #           ip: <Another actual VIP>
-- include: hardcoded-network-discover.yml
+- import_tasks: hardcoded-network-discover.yml
 
 - name: Get pacemaker status
   systemd:
@@ -45,7 +45,7 @@
   notify:
   - Restart ipsec
 
-- include: legacy-ipsec-conf.yml
+- include_tasks: legacy-ipsec-conf.yml
   with_items: "{{ networks }}"
 
 # Permissions gotten from http://www.linux-ha.org/doc/dev-guides/_installing_and_packaging_resource_agents.html
@@ -60,7 +60,7 @@
 
 # This queries the VIPs for all networks and flattens them into a list
 # that contains a dict with the "name" and "ip" for each VIP entry.
-- include: resource-agent.yml
+- include_tasks: resource-agent.yml
   loop_control:
     loop_var: current_vip
   with_items: "{{ networks|default([])|json_query('[*].vips[]')|list }}"

@@ -47,7 +47,7 @@
   register: resource_agent
   when: pacemaker_running
 
-- include: ipsec-conf.yml
+- include_tasks: ipsec-conf.yml
   with_items: "{{ private_networks }}"
   vars:
     policy: private
@@ -56,7 +56,7 @@
 # Unfortunately the ctlplane currently has issues when non-opportunistic
 # tunnels are used. It will reject any connection and hold packets for
 # some reason.
-- include: ipsec-conf.yml
+- include_tasks: ipsec-conf.yml
   with_items: "{{ private_or_clear_networks }}"
   vars:
     policy: private-or-clear
