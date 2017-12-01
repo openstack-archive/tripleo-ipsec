@@ -12,3 +12,7 @@
     name: ipsec
     state: restarted
   become: yes
+
+- name: Listen for IPSEC connections
+  shell: ipsec whack --listen
+  become: yes

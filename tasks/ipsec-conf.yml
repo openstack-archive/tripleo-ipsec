@@ -55,6 +55,7 @@
       backup: yes
     notify:
     - Restart ipsec
+    - Listen for IPSEC connections
 
   - name: Write ipsec tunnel policy for the {{ network }} network
     template:
@@ -66,6 +67,7 @@
     - type == 'opportunistic'
     notify:
     - Restart ipsec
+    - Listen for IPSEC connections
 
   - name: Write ipsec tunnel secrets for the {{ network }} network
     template:
@@ -77,6 +79,7 @@
     - type != 'opportunistic'
     notify:
     - Restart ipsec
+    - Listen for IPSEC connections
 
   - name: Write ipsec tunnel configuration for the {{ network }} network
     template:
@@ -95,6 +98,7 @@
     when: current_vip.ip != '' and type != 'opportunistic'
     notify:
     - Restart ipsec
+    - Listen for IPSEC connections
 
   - name: Write VIP ipsec tunnel configuration for the {{ network }} network
     template:
@@ -104,6 +108,7 @@
     when: current_vip.ip != '' and type != 'opportunistic'
     notify:
     - Restart ipsec
+    - Listen for IPSEC connections
 
   - include_tasks: resource-agent.yml
     when:
