@@ -7,6 +7,11 @@
   block:
   - include: setup.yml
 
+  - include: firewall.yml
+    when: not ipsec_skip_firewall_rules|bool
+
+  - meta: flush_handlers
+
   # This doesn't use the dynamic inventory
   - include: legacy.yml
     when: enabled_networks is not defined or ipsec_force_install_legacy|bool
