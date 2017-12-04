@@ -1,0 +1,8 @@
+- project:
+    name: openstack/tripleo-ipsec
+    check:
+      jobs:
+        - openstack-ansible-linters
+    gate:
+      jobs:
+        - openstack-ansible-linters
