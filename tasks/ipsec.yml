@@ -62,3 +62,5 @@
     policy: private-or-clear
     type: "{{ ipsec_type }}"
   when: use_opportunistic_ipsec|bool
+
+- meta: flush_handlers
