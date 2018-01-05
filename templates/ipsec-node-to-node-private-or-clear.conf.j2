@@ -16,7 +16,6 @@ conn overcloud-private-node-to-node-{{ network }}-ip-{{ loop.index0 }}
         failureshunt=passthrough
         ikev2=insist
         auto=start
-        keyingtries=1
         retransmit-timeout=2s
         phase2alg={{ ipsec_algorithm }}
 {% endfor %}
