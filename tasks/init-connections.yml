@@ -1,0 +1,47 @@
+---
+- name: Set network name fact
+  set_fact:
+    network: "{{ item }}"
+
+- name: Set IP/VIP variable key facts
+  set_fact:
+    ip_var_key: "{{ item + '_ip' }}"
+    vip_var_key: "{{ item + '_vip' }}"
+
+- name: Set current IP fact
+  set_fact:
+    current_ip: "{{ hostvars[inventory_hostname][ip_var_key] }}"
+
+# This effectively skips the configuration if we're in a network that's
+# not actually enabled. We can notice that if the IP has fallen back to
+# the control plane's IP.
+- when: current_ip != ctlplane_ip or network == 'ctlplane'
+  block:
+  - name: Set net CIDR fact
+    set_fact:
+      current_subnet: "{{ ip_with_prefix_register.stdout | ipaddr('subnet') }}"
+
+  # Gets the IPs for the other nodes in the network. It skips the current IP and
+  # also skips the nodes that are not in the subnet (which fall back to the
+  # ctlplane network by default).
+  - name: Set other IPs fact
+    set_fact:
+      other_ips: "{{ hostvars|json_query(other_ips_query)|difference([current_ip])|ipaddr(current_subnet) }}"
+    vars:
+      other_ips_query: '*.{{ ip_var_key }}'
+
+  - name: Set VIP fact
+    set_fact:
+      current_vip:
+        name: "{{ network }}"
+        ip: "{{ hostvars[inventory_hostname][vip_var_key]|default('') }}"
+
+  - name: Ping all hosts in this network
+    command: "ping -c 5 {{ item }}"
+    ignore_errors: true
+    with_items: "{{ other_ips }}"
+
+  - name: Ping {{ current_vip.name }} VIP
+    command: "ping -c 5 {{ current_vip.ip }}"
+    when: current_vip.ip != ''
+    ignore_errors: true

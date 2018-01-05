@@ -64,3 +64,6 @@
   when: use_opportunistic_ipsec|bool
 
 - meta: flush_handlers
+
+- include_tasks: init-connections.yml
+  with_items: "{{ private_networks }}"
