@@ -16,5 +16,6 @@
 - name: Listen for IPSEC connections
   shell: ipsec whack --listen
   become: yes
+  ignore_errors: true
   when:
   - inventory_hostname in groups['pacemaker']
