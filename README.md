@@ -31,6 +31,8 @@ Role Variables
 * `ipsec_algorithm`: Defines the encryption algorithm to use in the phase2alg
   configuration option for the tunnels. Defaults to: `aes_gcm128-null`.
   The possible values should be checked in libreswan's documentation.
+* `ipsec_configure_vips`: Determines whether or not the role should configure
+  the tunnels for the VIPs. Defaults to: `true`.
 * `ipsec_skip_firewall_rules`: Determines whether the role should skip
   or not the firewall rules. Defaults to: `false`.
 * `ipsec_uninstall_tunnels`: Determines whether the role should remove the IPSEC

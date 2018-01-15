@@ -43,5 +43,5 @@
 
   - name: Ping {{ current_vip.name }} VIP
     command: "ping -c 5 {{ current_vip.ip }}"
-    when: current_vip.ip != ''
+    when: current_vip.ip != '' and ipsec_configure_vips|bool
     ignore_errors: true
