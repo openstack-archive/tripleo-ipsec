@@ -54,7 +54,6 @@
       replace: '\1\2'
       backup: yes
     notify:
-    - Restart ipsec
     - Listen for IPSEC connections
 
   - name: Write ipsec tunnel policy for the {{ network }} network
@@ -66,7 +65,6 @@
     - other_ips != []
     - type == 'opportunistic'
     notify:
-    - Restart ipsec
     - Listen for IPSEC connections
 
   - name: Write ipsec tunnel secrets for the {{ network }} network
@@ -78,7 +76,6 @@
     - other_ips != []
     - type != 'opportunistic'
     notify:
-    - Restart ipsec
     - Listen for IPSEC connections
 
   - name: Write ipsec tunnel configuration for the {{ network }} network
@@ -87,8 +84,6 @@
       dest: /etc/ipsec.d/overcloud-{{ network }}-{{ type }}-{{ policy }}-tunnels.conf
       mode: '0640'
     when: other_ips != []
-    notify:
-    - Restart ipsec
 
   - name: Write VIP ipsec secrets file for the {{ network }} network
     template:
@@ -97,7 +92,6 @@
       mode: '0600'
     when: current_vip.ip != '' and type != 'opportunistic'
     notify:
-    - Restart ipsec
     - Listen for IPSEC connections
 
   - name: Write VIP ipsec tunnel configuration for the {{ network }} network
@@ -107,7 +101,6 @@
       mode: '0640'
     when: current_vip.ip != '' and type != 'opportunistic'
     notify:
-    - Restart ipsec
     - Listen for IPSEC connections
 
   - include_tasks: resource-agent.yml

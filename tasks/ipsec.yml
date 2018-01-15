@@ -25,8 +25,6 @@
     insertafter: '^config setup'
     line: "\tuniqueids=no"
   when: not use_opportunistic_ipsec|bool
-  notify:
-  - Restart ipsec
 
 - name: Get pacemaker status
   systemd:
@@ -62,6 +60,11 @@
     policy: private-or-clear
     type: "{{ ipsec_type }}"
   when: use_opportunistic_ipsec|bool
+
+# We force the restart of IPSEC here since adding it as a handler was
+# getting run between the loop above, which is not desirable.
+- name: Force restart IPSEC
+  shell: ipsec restart
 
 - meta: flush_handlers
 
