@@ -111,3 +111,52 @@
     - inventory_hostname == groups['pacemaker'][0]
     - ipsec_setup_resource_agents|bool
     - ipsec_configure_vips|bool
+
+  - name: Filter redis VIP through current subnet
+    set_fact:
+      redis_net_filter: "{{ redis_vip|ipaddr(current_subnet) }}"
+
+  - name: Set fact to check if redis is part of this subnet
+    set_fact:
+      redis_in_subnet: "{{ redis_vip == redis_net_filter }}"
+
+  - name: Set Redis VIP fact
+    set_fact:
+      current_vip:
+        name: redis
+        ip: "{{ redis_vip }}"
+    when:
+    - redis_in_subnet|bool
+
+  - name: Write Redis VIP ipsec secrets file for the {{ network }} network
+    template:
+      src: ipsec-vip-tunnels.secrets.j2
+      dest: /etc/ipsec.d/overcloud-redis-vip-tunnels.secrets
+      mode: '0600'
+    when:
+    - redis_in_subnet|bool
+    - type != 'opportunistic'
+    - ipsec_configure_vips|bool
+    notify:
+    - Listen for IPSEC connections
+
+  - name: Write Redis VIP ipsec tunnel configuration for the {{ network }} network
+    template:
+      src: ipsec-vip-tunnels.conf.j2
+      dest: /etc/ipsec.d/overcloud-redis-vip-tunnels.conf
+      mode: '0640'
+    when:
+    - redis_in_subnet|bool
+    - type != 'opportunistic'
+    - ipsec_configure_vips|bool
+    notify:
+    - Listen for IPSEC connections
+
+  - include_tasks: resource-agent.yml
+    when:
+    - pacemaker_running
+    - type != 'opportunistic'
+    - redis_in_subnet|bool
+    - inventory_hostname == groups['pacemaker'][0]
+    - ipsec_setup_resource_agents|bool
+    - ipsec_configure_vips|bool
