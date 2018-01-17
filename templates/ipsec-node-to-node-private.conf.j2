@@ -12,7 +12,6 @@ conn overcloud-private-node-to-node-{{ network }}-ip-{{ loop.index0 }}
         rightid={{ other_ip }}
         right={{ other_ip }}
         failureshunt=drop
-        ikev2=insist
         auto=start
         retransmit-timeout=2s
         phase2alg={{ ipsec_algorithm }}
