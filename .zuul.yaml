@@ -1,4 +1,0 @@
-- project:
-    name: openstack/tripleo-ipsec
-    templates:
-      - noop-jobs
