@@ -105,7 +105,7 @@
 
   - include_tasks: resource-agent.yml
     when:
-    - pacemaker_running
+    - pacemaker_running|bool
     - type != 'opportunistic'
     - current_vip.ip != ''
     - inventory_hostname == groups['pacemaker'][0]
@@ -154,7 +154,7 @@
 
   - include_tasks: resource-agent.yml
     when:
-    - pacemaker_running
+    - pacemaker_running|bool
     - type != 'opportunistic'
     - redis_in_subnet|bool
     - inventory_hostname == groups['pacemaker'][0]

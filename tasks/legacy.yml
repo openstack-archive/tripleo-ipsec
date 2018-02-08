@@ -34,7 +34,7 @@
 - name: Determine which node is hosting the VIP
   shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1"\t"$4}' | grep "{{ networks[0]['vips'][0]['ip'] }}" | awk '{print $2}'
   register: node_hosting_the_vip
-  when: pacemaker_running
+  when: pacemaker_running|bool
 
 - name: Add uniqueids = no to ipsec setup configuration
   lineinfile:
@@ -56,7 +56,7 @@
     mode: '0755'
     force: no
   register: resource_agent
-  when: pacemaker_running
+  when: pacemaker_running|bool
 
 # This queries the VIPs for all networks and flattens them into a list
 # that contains a dict with the "name" and "ip" for each VIP entry.
@@ -65,5 +65,5 @@
     loop_var: current_vip
   with_items: "{{ networks|default([])|json_query('[*].vips[]')|list }}"
   when:
+  - pacemaker_running|bool
   - node_hosting_the_vip.stdout == ansible_hostname
-  - pacemaker_running

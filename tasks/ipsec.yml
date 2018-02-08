@@ -43,7 +43,7 @@
     mode: '0755'
     force: no
   register: resource_agent
-  when: pacemaker_running
+  when: pacemaker_running|bool
 
 - include_tasks: ipsec-conf.yml
   with_items: "{{ private_networks }}"
