@@ -23,7 +23,7 @@ conn overcloud-{{ current_vip.name }}-node-to-vip-tunnel
     rightid=@{{ current_vip.name }}vip
     authby=secret
     auto=start
-    dpdaction=hold
+    dpdaction=restart
     dpddelay=5
     dpdtimeout=15
     phase2alg={{ ipsec_algorithm }}
