@@ -48,6 +48,11 @@
 - include_tasks: legacy-ipsec-conf.yml
   with_items: "{{ networks }}"
 
+# We force the restart of IPSEC here since adding it as a handler was
+# getting run between the loop above, which is not desirable.
+- name: Force restart IPSEC
+  shell: ipsec restart
+
 # Permissions gotten from http://www.linux-ha.org/doc/dev-guides/_installing_and_packaging_resource_agents.html
 - name: Install TripleO IPSEC resource agent
   copy:
