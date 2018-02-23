@@ -8,6 +8,7 @@
   set_fact:
     resource_agent_name: tripleo-ipsec-{{ current_vip.name }}
     specific_tunnel: overcloud-{{ current_vip.name }}-vip-tunnel
+    fallback_tunnel: overcloud-{{ current_vip.name }}-node-to-vip-tunnel
     specific_vip: "{{ current_vip.ip }}"
 
 - name: Was the {{ resource_agent_name }} Resource Agent added already?
@@ -23,7 +24,7 @@
   - found_resource_agent|succeeded
 
 - name: Add {{ resource_agent_name }} pacemaker resource agent
-  command: pcs resource create {{ resource_agent_name }} ocf:heartbeat:ipsec tunnel={{ specific_tunnel }} vip={{ specific_vip }} --disabled
+  command: pcs resource create {{ resource_agent_name }} ocf:heartbeat:ipsec tunnel={{ specific_tunnel }} vip={{ specific_vip }} fallbacktunnel={{ fallback_tunnel }} --disabled
   when:
   - resource_agent.changed or found_resource_agent|failed
 
