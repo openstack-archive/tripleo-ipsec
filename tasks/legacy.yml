@@ -59,7 +59,7 @@
     src: ipsec-resource-agent.sh
     dest: /usr/lib/ocf/resource.d/heartbeat/ipsec
     mode: '0755'
-    force: no
+    force: yes
   register: resource_agent
   when: pacemaker_running|bool
 
