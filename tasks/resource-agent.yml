@@ -33,8 +33,13 @@
   when:
   - resource_agent.changed or found_resource_agent|failed
 
-- name: Add ordering rule with VIP ( {{ resource_agent_name }} )
-  command: pcs constraint order start ip-{{ specific_vip }} then {{ resource_agent_name }}
+- name: Add ordering rule with VIP ( {{ resource_agent_name }} ) for start operation
+  command: pcs constraint order start ip-{{ specific_vip }} then start {{ resource_agent_name }} symmetrical=false
+  when:
+  - resource_agent.changed or found_resource_agent|failed
+
+- name: Add ordering rule with VIP ( {{ resource_agent_name }} ) for stop operation
+  command: pcs constraint order stop ip-{{ specific_vip }} then stop {{ resource_agent_name }} symmetrical=false
   when:
   - resource_agent.changed or found_resource_agent|failed
 
