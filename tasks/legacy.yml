@@ -21,15 +21,6 @@
 #           ip: <Another actual VIP>
 - import_tasks: hardcoded-network-discover.yml
 
-- name: Get pacemaker status
-  systemd:
-    name: pacemaker
-  register: pacemaker_status
-
-- name: Determine if pacemaker is running
-  set_fact:
-    pacemaker_running: "{{ pacemaker_status.status.ActiveState == 'active' }}"
-
 # This returns the hostname (short) of the node hosting the VIP
 - name: Determine which node is hosting the VIP
   shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1"\t"$4}' | grep "{{ networks[0]['vips'][0]['ip'] }}" | awk '{print $2}'

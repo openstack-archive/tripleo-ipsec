@@ -1,4 +1,6 @@
 ---
+- import_tasks: pacemaker_facts.yml
+
 - when: ipsec_uninstall_tunnels|bool or ipsec_upgrade_tunnels|bool
   block:
   - import_tasks: uninstall.yml

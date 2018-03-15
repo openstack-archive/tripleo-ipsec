@@ -1,0 +1,11 @@
+---
+
+- name: Get pacemaker status
+  systemd:
+    name: pacemaker
+  register: pacemaker_status
+
+- name: Determine if pacemaker is running
+  set_fact:
+    pacemaker_running: "{{ pacemaker_status.status.ActiveState == 'active' }}"
+

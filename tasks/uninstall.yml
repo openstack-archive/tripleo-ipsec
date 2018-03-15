@@ -1,4 +1,18 @@
 ---
+- name: Get first node running the IPSec resource agents
+  shell: "pcs status | grep tripleo-ipsec | head -1 | awk '{print $4}'"
+  register: node_running_ipsec_agent_register
+  when: pacemaker_running|bool
+  changed_when: false
+  ignore_errors: true
+
+- name: Delete IPSec pacemaker resource agents
+  shell: "pcs status | grep tripleo-ipsec | awk '{print $1}' | xargs -n1 pcs resource delete"
+  when:
+  - pacemaker_running|bool
+  - node_running_ipsec_agent_register.rc == 0
+  - node_running_ipsec_agent_register.stdout == ansible_hostname
+
 - name: Find tunnel configurations to delete
   find:
     paths: /etc/ipsec.d/
