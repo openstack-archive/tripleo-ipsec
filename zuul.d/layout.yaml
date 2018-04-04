@@ -1,7 +1,7 @@
 - project:
     check:
       jobs:
-        - openstack-ansible-linters
+        - openstack-tox-linters
     gate:
       jobs:
-        - openstack-ansible-linters
+        - openstack-tox-linters
