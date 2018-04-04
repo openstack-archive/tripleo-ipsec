@@ -42,6 +42,7 @@ Role Variables
   created in a previous run and replace them. Defaults to: `false`.
 * `ipsec_setup_resource_agents`: Determines whether the role should create the
   pacemaker resource agents or not. Defaults to: `true`.
+* `ipsec_skip_networks`: Determines which networks should be skipped. defaults to `[]`.
 * `ipsec_force_install_legacy`: Forces the legacy installation. Defaults to: `false`.
 * `overcloud_controller_identifier`: This identifies which nodes are
   controllers in the cluster and which aren't, and should be part of the
@@ -129,3 +130,71 @@ with the nodes in the overcloud. And However it comes with some inconveniences:
 
   This assumes that you're deploying this playbook from the undercloud itself.
   Hence the undercloud group containing localhost.
+
+Skipping networks
+=================
+
+The `ipsec_skip_networks` variable allows the user to skip the tunnel setup
+for certain networks. This works by using the network name, which can vary
+depending on your type of setup.
+
+Using the dynamic inventory (Queens and beyond)
+-----------------------------------------------
+
+When using the dynamic inventory, the network names will be based on the names
+that are set in your `network_data.yaml` file, from tripleo-heat-templates.
+As mentioned in tripleo-heat-templates, this file will determine which networks
+you're setting up in your overall TripleO deployment, and will even specify
+which of those networks have VIPs attached to them.
+
+The network names to use in the `ipsec_skip_networks` variable will be under
+the `name_lower` section of each network definition.
+
+For instance, if you want to skip the storage management network, you'll see
+that the entry looks as follows:
+
+  ```
+  - name: StorageMgmt
+    name_lower: storage_mgmt
+    vip: true
+    vlan: 40
+    ip_subnet: '172.16.3.0/24'
+    allocation_pools: [{'start': '172.16.3.4', 'end': '172.16.3.250'}]
+    ipv6_subnet: 'fd00:fd00:fd00:4000::/64'
+    ipv6_allocation_pools: [{'start': 'fd00:fd00:fd00:4000::10', 'end': 'fd00:fd00:fd00:4000:ffff:ffff:ffff:fffe'}]
+  ```
+
+So, in this case, the variable you'll put in your ansible variables file will
+have the following entry:
+
+  ```
+  ipsec_skip_networks:
+  - storage_mgmt
+  ```
+
+You can add more networks by adding more items to that list.
+
+Legacy setups
+-------------
+
+If you're using a legacy setup (which would work in Newton), you'll need to
+note that the network names are hardcoded; so you'll have the following
+options available:
+
+* internalapi
+* storage
+* storagemgmt
+* ctlplane
+
+You can also explicitly skip creating the Redis VIP by adding the `redis` word
+to the list.
+
+If you would want to skip the Storage and Storage Management networks, the
+variable you'll put in your ansible variables file will have the
+following entry:
+
+  ```
+  ipsec_skip_networks:
+  - storage
+  - storagemgmt
+  ```

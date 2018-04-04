@@ -8,3 +8,4 @@ ipsec_skip_firewall_rules: false
 ipsec_uninstall_tunnels: false
 ipsec_upgrade_tunnels: false
 use_opportunistic_ipsec: false
+ipsec_skip_networks: []
