@@ -1,4 +1,6 @@
 - project:
+    templates:
+      - ansible-lint-jobs
     check:
       jobs:
         - openstack-ansible-linters
