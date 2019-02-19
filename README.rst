@@ -53,80 +53,70 @@ Role Variables
 Example Playbook
 ----------------
 
-    - hosts: servers
-      roles:
-         - tripleo-ipsec
+Sample::
+
+   - hosts: servers
+     roles:
+        - tripleo-ipsec
 
 Enabling ipsec tunnels in TripleO
 =========================================
 
-The main playbook to be ran on the overcloud nodes is:
+The main playbook to be ran on the overcloud nodes is::
 
-```
-tests/deploy-ipsec-tripleo.yml
-```
+   tests/deploy-ipsec-tripleo.yml
 
 Which will deploy IPSEC on the overcloud nodes for the internal API network.
 
 We'll use a PSK and an AES128 cipher.
 
-Add the PSK to an ansible var file:
+Add the PSK to an ansible var file::
 
-```
-cat <<EOF > ipsec-psk.yml
-ipsec_psk: $(openssl rand -base64 48)
-EOF
-```
+   cat <<EOF > ipsec-psk.yml
+   ipsec_psk: $(openssl rand -base64 48)
+   EOF
 
 Encrypt the file with ansible-vault (note that it'll prompt for a password):
 
-```
-ansible-vault encrypt ipsec-psk.yml
-```
+   ansible-vault encrypt ipsec-psk.yml
 
-Having done this, now you can run the playbook:
+Having done this, now you can run the playbook::
 
-```
-ansible-playbook -i /usr/bin/tripleo-ansible-inventory --ask-vault-pass \
-	-e @ipsec-psk.yml tests/deploy-ipsec-tripleo.yml
-```
+   ansible-playbook -i /usr/bin/tripleo-ansible-inventory --ask-vault-pass \
+           -e @ipsec-psk.yml tests/deploy-ipsec-tripleo.yml
 
 Generating an inventory
 -----------------------
 
-The script _/usr/bin/tripleo-ansible-inventory_ generates a dynamic inventory
+The script */usr/bin/tripleo-ansible-inventory* generates a dynamic inventory
 with the nodes in the overcloud. And However it comes with some inconveniences:
 
 * In deployments older than Pike, it might be a bit slow to run. To address
   this, in Ocata and Pike it's possible to generate a static inventory out of
-  the output of this command:
+  the output of this command::
 
-  ```
-  /usr/bin/tripleo-ansible-inventory  --static-inventory nodes.txt
-  ```
+     /usr/bin/tripleo-ansible-inventory  --static-inventory nodes.txt
 
   This will create a called nodes.txt with the static inventory, which we could
   now use and save some time.
 
 * Newton unfortunately only takes into account computes and controllers with
   this command. So for this deployment we need to generate an inventory of our
-  own. we can do so with the following command:
+  own. we can do so with the following command::
 
-  ```
-  cat <<EOF > nodes.txt
-  [undercloud]
-  localhost
+     cat <<EOF > nodes.txt
+     [undercloud]
+     localhost
 
-  [undercloud:vars]
-  ansible_connection = local
+     [undercloud:vars]
+     ansible_connection = local
 
-  [overcloud:vars]
-  ansible_ssh_user = heat-admin
+     [overcloud:vars]
+     ansible_ssh_user = heat-admin
 
-  [overcloud]
-  $( openstack server list -c Networks -f value | sed 's/ctlplane=//')
-  EOF
-  ```
+     [overcloud]
+     $( openstack server list -c Networks -f value | sed 's/ctlplane=//')
+     EOF
 
   This assumes that you're deploying this playbook from the undercloud itself.
   Hence the undercloud group containing localhost.
@@ -151,9 +141,8 @@ The network names to use in the `ipsec_skip_networks` variable will be under
 the `name_lower` section of each network definition.
 
 For instance, if you want to skip the storage management network, you'll see
-that the entry looks as follows:
+that the entry looks as follows::
 
-  ```
   - name: StorageMgmt
     name_lower: storage_mgmt
     vip: true
@@ -162,15 +151,12 @@ that the entry looks as follows:
     allocation_pools: [{'start': '172.16.3.4', 'end': '172.16.3.250'}]
     ipv6_subnet: 'fd00:fd00:fd00:4000::/64'
     ipv6_allocation_pools: [{'start': 'fd00:fd00:fd00:4000::10', 'end': 'fd00:fd00:fd00:4000:ffff:ffff:ffff:fffe'}]
-  ```
 
 So, in this case, the variable you'll put in your ansible variables file will
-have the following entry:
+have the following entry::
 
-  ```
   ipsec_skip_networks:
   - storage_mgmt
-  ```
 
 You can add more networks by adding more items to that list.
 
@@ -191,10 +177,8 @@ to the list.
 
 If you would want to skip the Storage and Storage Management networks, the
 variable you'll put in your ansible variables file will have the
-following entry:
+following entry::
 
-  ```
   ipsec_skip_networks:
   - storage
   - storagemgmt
-  ```
