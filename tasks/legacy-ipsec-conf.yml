@@ -6,7 +6,7 @@
     controllers: "{{ item.controllers }}"
     vips: "{{ item.vips }}"
 
-- name: Add legacy {{network }} tunnel configuration if not in skip list
+- name: Add legacy {{ network }} tunnel configuration if not in skip list
   when: network not in ipsec_skip_networks
   block:
   - name: Write node-to-node ipsec secrets file for the {{ network }} network

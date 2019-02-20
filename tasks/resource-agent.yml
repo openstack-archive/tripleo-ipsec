@@ -27,7 +27,8 @@
     - found_resource_agent|succeeded
 
   - name: Add {{ resource_agent_name }} pacemaker resource agent
-    command: pcs resource create {{ resource_agent_name }} ocf:heartbeat:ipsec tunnel={{ specific_tunnel }} vip={{ specific_vip }} fallbacktunnel={{ fallback_tunnel }} --disabled
+    command: pcs resource create {{ resource_agent_name }} ocf:heartbeat:ipsec tunnel={{ specific_tunnel }} vip={{ specific_vip }}
+             fallbacktunnel={{ fallback_tunnel }} --disabled
     when:
     - resource_agent.changed or found_resource_agent|failed
 

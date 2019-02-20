@@ -47,7 +47,7 @@
         name: "{{ network }}"
         ip: "{{ hostvars[inventory_hostname][vip_var_key]|default('') }}"
 
-  - name: Remove {{ network}} from virtual-private setting in ipsec setup configuration
+  - name: Remove {{ network }} from virtual-private setting in ipsec setup configuration
     replace:
       path: /etc/ipsec.conf
       regexp: '(^\s+.*)%v4:{{ current_subnet|regex_replace("\.", "\.") }},(.*)$'
@@ -90,7 +90,7 @@
       src: ipsec-vip-tunnels.secrets.j2
       dest: /etc/ipsec.d/overcloud-{{ current_vip.name }}-vip-tunnels.secrets
       mode: '0600'
-    when: current_vip.ip != '' and type != 'opportunistic' and ipsec_configure_vips|bool
+    when: current_vip.ip and type != 'opportunistic' and ipsec_configure_vips|bool
     notify:
     - Listen for IPSEC connections
 
@@ -99,7 +99,7 @@
       src: ipsec-vip-tunnels.conf.j2
       dest: /etc/ipsec.d/overcloud-{{ current_vip.name }}-vip-tunnels.conf
       mode: '0640'
-    when: current_vip.ip != '' and type != 'opportunistic' and ipsec_configure_vips|bool
+    when: current_vip.ip and type != 'opportunistic' and ipsec_configure_vips|bool
     notify:
     - Listen for IPSEC connections
 
@@ -107,7 +107,7 @@
     when:
     - pacemaker_running|bool
     - type != 'opportunistic'
-    - current_vip.ip != ''
+    - current_vip.ip
     - inventory_hostname == groups['pacemaker'][0]
     - ipsec_setup_resource_agents|bool
     - ipsec_configure_vips|bool
