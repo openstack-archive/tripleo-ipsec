@@ -60,7 +60,7 @@ Sample::
         - tripleo-ipsec
 
 Enabling ipsec tunnels in TripleO
-=========================================
+=================================
 
 The main playbook to be ran on the overcloud nodes is::
 
