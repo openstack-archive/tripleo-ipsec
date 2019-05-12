@@ -23,7 +23,7 @@
 
 # This returns the hostname (short) of the node hosting the VIP
 - name: Determine which node is hosting the VIP
-  shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1"\t"$4}' | grep "{{ networks[0]['vips'][0]['ip'] }}" | awk '{print $2}'
+  shell: pcs status | grep ip- | sed 's/ip-//' | awk '{print $1"\t"$4}' | grep "{{ networks[0]['vips'][0]['ip'] }}" | awk '{print $2}' # noqa 306
   register: node_hosting_the_vip
   when: pacemaker_running|bool
 
@@ -42,7 +42,7 @@
 # We force the restart of IPSEC here since adding it as a handler was
 # getting run between the loop above, which is not desirable.
 - name: Force restart IPSEC
-  shell: ipsec restart
+  shell: ipsec restart # noqa 301 305
 
 # Permissions gotten from http://www.linux-ha.org/doc/dev-guides/_installing_and_packaging_resource_agents.html
 - name: Install TripleO IPSEC resource agent

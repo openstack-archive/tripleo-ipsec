@@ -14,7 +14,7 @@
   become: yes
 
 - name: Listen for IPSEC connections
-  shell: ipsec whack --listen
+  shell: ipsec whack --listen # noqa 305
   become: yes
   ignore_errors: true
   when:

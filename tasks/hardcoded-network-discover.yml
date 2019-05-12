@@ -5,40 +5,40 @@
 # have some variables provided that will help us do this in a better way.
 
 - name: Get the current node's internal API IP address
-  shell: grep "{{ ansible_hostname }}.internalapi$" /etc/hosts | awk '{print $1}'
+  shell: grep "{{ ansible_hostname }}.internalapi$" /etc/hosts | awk '{print $1}' # noqa 306
   register: current_internalapi_ip_register
   changed_when: false
 
 # This outputs the hosts as lines consisting of <fqdn>,<IP>
 - name: Get the controller internal API hostnames and IP addresses
-  shell: grep "{{ overcloud_controller_identifier }}.*internalapi$" /etc/hosts | awk '{print $3","$1}'
+  shell: grep "{{ overcloud_controller_identifier }}.*internalapi$" /etc/hosts | awk '{print $3","$1}' # noqa 306
   register: internalapi_controllers_register
   changed_when: false
 
 - name: Get the current node's storage IP address
-  shell: grep "{{ ansible_hostname }}.storage$" /etc/hosts | awk '{print $1}'
+  shell: grep "{{ ansible_hostname }}.storage$" /etc/hosts | awk '{print $1}' # noqa 306
   register: current_storage_ip_register
   changed_when: false
 
 # This outputs the hosts as lines consisting of <fqdn>,<IP>
 - name: Get the controller storage hostnames and IP addresses
-  shell: grep "{{ overcloud_controller_identifier }}.*storage$" /etc/hosts | awk '{print $3","$1}'
+  shell: grep "{{ overcloud_controller_identifier }}.*storage$" /etc/hosts | awk '{print $3","$1}' # noqa 306
   register: storage_controllers_register
   changed_when: false
 
 - name: Get the current node's storagemgmt IP address
-  shell: grep "{{ ansible_hostname }}.storagemgmt$" /etc/hosts | awk '{print $1}'
+  shell: grep "{{ ansible_hostname }}.storagemgmt$" /etc/hosts | awk '{print $1}' # noqa 306
   register: current_storagemgmt_ip_register
   changed_when: false
 
 # This outputs the hosts as lines consisting of <fqdn>,<IP>
 - name: Get the controller storagemgmt hostnames and IP addresses
-  shell: grep "{{ overcloud_controller_identifier }}.*storagemgmt$" /etc/hosts | awk '{print $3","$1}'
+  shell: grep "{{ overcloud_controller_identifier }}.*storagemgmt$" /etc/hosts | awk '{print $3","$1}' # noqa 306
   register: storagemgmt_controllers_register
   changed_when: false
 
 - name: Get the current node's ctlplane IP address
-  shell: grep "{{ ansible_hostname }}.ctlplane$" /etc/hosts | awk '{print $1}'
+  shell: grep "{{ ansible_hostname }}.ctlplane$" /etc/hosts | awk '{print $1}' # noqa 306
   register: current_ctlplane_ip_register
   changed_when: false
 

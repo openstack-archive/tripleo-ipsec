@@ -7,7 +7,7 @@
   ignore_errors: true
 
 - name: Delete IPSec pacemaker resource agents
-  shell: "pcs status | grep tripleo-ipsec | awk '{print $1}' | xargs -n1 pcs resource delete"
+  shell: "pcs status | grep tripleo-ipsec | awk '{print $1}' | xargs -n1 pcs resource delete" # noqa 306
   when:
   - pacemaker_running|bool
   - node_running_ipsec_agent_register.rc == 0
