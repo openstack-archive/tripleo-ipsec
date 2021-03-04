@@ -1,5 +1,6 @@
 galaxy_info:
   author: Juan Antonio Osorio Robles
+  role_name: tripleo_ipsec
   description: Ansible role to configure IPSEC tunnels for TripleO
   company: Red Hat Inc.
   issue_tracker_url: https://github.com/JAORMX/tripleo-fernet-key-rotation/issues
