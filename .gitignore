@@ -1,9 +1,0 @@
-*.retry
-*.swp
-.eggs/
-.tox/
-tripleo_ipsec.egg-info/
-# Hardcoded to be the file containing the secret
-# We ignore it from here since it should be generated
-# by the user.
-ipsec-psk.yml

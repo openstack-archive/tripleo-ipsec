@@ -1,7 +1,0 @@
-- project:
-    check:
-      jobs:
-        - openstack-tox-linters
-    gate:
-      jobs:
-        - openstack-tox-linters
